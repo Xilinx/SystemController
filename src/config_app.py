@@ -11,7 +11,7 @@ app_config = {
     ,"major_version":"1"
     ,"minor_version" : "1"
     ,"dev_for_major_ver" : "1"
-    ,"dev_minor_ver" : "0"
+    ,"dev_minor_ver" : "1"
     ,"sc_app_path":"sc_app"
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]

@@ -607,7 +607,7 @@ function rendertabComponentDiv(title, comp){
                     bt1.setAttribute("id", "selectFile");
                     bt.setAttribute("type", "file");
                     bt.setAttribute('multiple', 'multiple');
-		    bt.setAttribute('accept', '.txt,.tcs');
+		    bt.setAttribute('accept', '.txt,.tcs,.bin');
                     bt1.onclick = function () {
                          bt.click();
                          return false;
