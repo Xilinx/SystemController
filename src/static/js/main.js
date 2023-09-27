@@ -237,35 +237,29 @@ var theadcomp = document.createElement("thead");
                        tdcomp.appendChild(em)
                     break;
                     case "F":
-                        c[elem + "V"].forEach((values, index) => {
-    			var em = document.createElement("select");
-   			em.setAttribute("reqkey", c[elem]);
-    			em.setAttribute("id", 'selectElementId' + index);
-    			if (index == 0) {
-        		var defOptionTxt = document.createElement("optgroup");
-        		defOptionTxt.setAttribute("label", "Default");
-        		em.appendChild(defOptionTxt);
-        		var usrOptionTxt = document.createElement("optgroup");
-        		usrOptionTxt.setAttribute("label", "User");
-        		em.appendChild(usrOptionTxt);
-        		usrOptionTxt.setAttribute("id", "group" + index);
-    			} else {
-        		var defOptionTcs = document.createElement("optgroup");
-        		defOptionTcs.setAttribute("label", "Default");
-        		em.appendChild(defOptionTcs);
-        		var usrOptionTcs = document.createElement("optgroup");
-        		usrOptionTcs.setAttribute("label", "User");
-        		em.appendChild(usrOptionTcs);
-        		usrOptionTcs.setAttribute("id", "group" + index);
-    			}    	        			                        
-		        tdcomp.appendChild(em)
-			var em = document.createElement("label");
-        	        em.innerHTML = c[elem+"N"][index];
-        	        tdcomp.appendChild(em)
-			var g = document.createElement("br");
-                        tdcomp.appendChild(g)
-                        });
+                    	var em = document.createElement("select");
+                        em.setAttribute("reqkey", c[elem]);
+                        em.setAttribute("id", 'selectElementId1' );
+                        var defOption = document.createElement("optgroup");
+                        defOption.setAttribute("label", "Default");
+                        em.appendChild(defOption);
+                        var usrOption = document.createElement("optgroup");
+                        usrOption.setAttribute("label", "User");
+                        em.appendChild(usrOption);
+                        tdcomp.appendChild(em)
                     break;
+                    case "G":
+                        var em = document.createElement("select");
+                        em.setAttribute("reqkey", c[elem]);
+                        em.setAttribute("id", 'selectElementId0');
+                        var defOption = document.createElement("optgroup");
+                        defOption.setAttribute("label", "Default");
+                        em.appendChild(defOption);
+                        var usrOption = document.createElement("optgroup");
+                        usrOption.setAttribute("label", "User");
+                        em.appendChild(usrOption);
+                        tdcomp.appendChild(em)
+		    break;
                     case "D":
                        var em = document.createElement("select");
 //                       em.classList.add("buttons");
@@ -357,13 +351,13 @@ function upload_clock_files() {
         success: function (res) {
             document.querySelectorAll('#selectElementId1').forEach((em, i) => {
                 while (em.length > 0) em.remove(em.length - 1);
-                jQuery.each(res["data"]["default"]["txtfiles"], function (k, d) {
+                jQuery.each(res["data"]["default"]["finallist"], function (k, d) {
                     var g = document.createElement("option");
                     g.setAttribute('value', d);
                     g.innerHTML = d
                     em.children[0].appendChild(g);
                 });
-                jQuery.each(res["data"]["user"]["txtfiles"], function (k, d) {
+                jQuery.each(res["data"]["user"]["finaluploadlist"], function (k, d) {
                     var g = document.createElement("option");
                     g.setAttribute('value', d);
                     g.innerHTML = d
@@ -371,14 +365,15 @@ function upload_clock_files() {
                 });
             });
             document.querySelectorAll('#selectElementId0').forEach((em, i) => {
+            console.log(em)
                 while (em.length > 0) em.remove(em.length - 1);
-                jQuery.each(res["data"]["default"]["tcsfiles"], function (k, d) {
+                jQuery.each(res["data"]["default"]["binfiles"], function (k, d) {
                     var g = document.createElement("option");
                     g.setAttribute('value', d);
                     g.innerHTML = d
                     em.children[0].appendChild(g);
                 });
-                jQuery.each(res["data"]["user"]["tcsfiles"], function (k, d) {
+                jQuery.each(res["data"]["user"]["binfiles"], function (k, d) {
                     var g = document.createElement("option");
                     g.setAttribute('value', d);
                     g.innerHTML = d
@@ -399,6 +394,7 @@ function fileUploder(formdata, fileObj, select_id) {
     var dupFound = false;
     var sIds = ["selectElementId0", "selectElementId1"]
     jQuery.each(sIds, function (t, l) {
+
         document.querySelectorAll('#' + l).forEach((em, i) => {
             jQuery.each(em.children, function (a, b) {
                 jQuery.each(b.children, function (c, d) {
@@ -412,7 +408,6 @@ function fileUploder(formdata, fileObj, select_id) {
         return;
 
     }
-    if (select_id == 1) {
         fetch('/uploader', {
             method: 'POST', // or 'PUT'
             body: formdata,
@@ -442,38 +437,6 @@ function fileUploder(formdata, fileObj, select_id) {
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }
-    else if (select_id == 0) {
-        fetch('/uploader', {
-            method: 'POST', // or 'PUT'
-            body: formdata,
-        })
-            .then(data => {
-                if (data.status == 200) {
-                    console.log('File uploaded:');
-                    $.ajax({
-                        url: "/clock_files",
-                        type: 'GET',
-                        data: {},
-                        timeout: 5000,
-                        dataType: 'json',
-                        success: function (res) {
-                            upload_clock_files();
-                            count = true
-                        },
-                        error: function (res) {
-                            console.log(res)
-                        }
-                    });
-                }
-                else if (data.status == 500) {
-                    console.log(data)
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }
 }
 function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();

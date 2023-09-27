@@ -144,25 +144,41 @@ class ClockFilesList(Resource):
         try:
             tcs_files = []
             txt_files = []
+            bin_files = []
             for c in os.listdir(app_config["8A34001_clk_files_path"]):
                 if c.endswith(".tcs"):
-                    tcs_files.append(c)
+                    tcs_files.append(os.path.splitext(c)[0])
                 if c.endswith(".txt"):
-                    txt_files.append(c)
-
+                    txt_files.append(os.path.splitext(c)[0])
+                if c.endswith(".bin"):
+                    bin_files.append(os.path.splitext(c)[0])
+            final_list = list(set(tcs_files+txt_files))
+            bin_files = list(set(bin_files))
             upload_tcs_files = []
             upload_txt_files = []
+            upload_bin_files = []
             if (os.path.exists(app_config["uploaded_files_path"])):
                 for c in os.listdir(app_config["uploaded_files_path"]):
                     if c.endswith(".tcs"):
-                        upload_tcs_files.append(c)
+                        upload_tcs_files.append(os.path.splitext(c)[0])
                     if c.endswith(".txt"):
-                        upload_txt_files.append(c)
-
+                        upload_txt_files.append(os.path.splitext(c)[0])
+                    if c.endswith(".bin"):
+                        upload_bin_files.append(os.path.splitext(c)[0])
+            final_upload_list = list(set(upload_txt_files+upload_tcs_files))
+            upload_bin_files = list(set(upload_bin_files))
             resp_json = {
                 "status": "success"
-                , "data": { "default":  {"txtfiles": txt_files ,"tcsfiles": tcs_files },
-                           "user":  {"txtfiles": upload_txt_files  ,"tcsfiles": upload_tcs_files }  }
+                , "data": {
+                    "default":  {
+                        "finallist": final_list
+                        , "binfiles": bin_files
+                    }
+                    , "user":  {
+                        "finaluploadlist": final_upload_list
+                        , "binfiles": upload_bin_files
+                    }
+                }
             }
             print(resp_json)
             return resp_json,200

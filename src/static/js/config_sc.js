@@ -293,7 +293,6 @@ function addClockTab(){
             ,"L0": tds
             ,"L1":"-"
             ,"F0": "value"
-            ,"F0N": [".tcs",".txt"]
             ,"F0V": [listsjson_sc["8A34001_clk_tcs_files"],listsjson_sc["8A34001_clk_txt_files"]]
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
@@ -329,12 +328,11 @@ function addClockTab(){
         if(tds.startsWith("8A34001") == true) {
         var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,L1,F0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,L1,G0,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": tds
             ,"L1": "-"
-            ,"F0": "value"
-            ,"F0N": [".tcs",".txt"]
-            ,"F0V": [listsjson_sc["8A34001_clk_tcs_files"],listsjson_sc["8A34001_clk_txt_files"]]
+            ,"G0": "value"
+            ,"G0V": [listsjson_sc["8A34001_clk_bin_files"]]
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"setbootclock"

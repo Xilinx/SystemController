@@ -28,7 +28,7 @@ app = Flask(__name__)
 api = Api(app)
 app.config['UPLOAD_FOLDER'] = app_config["uploaded_files_path"]
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
-ALLOWED_EXTENSIONS = set(['txt', 'tcs'])
+ALLOWED_EXTENSIONS = set(['txt', 'tcs', 'bin'])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -107,7 +107,8 @@ def generate_gen_sc_file(sc_app_path, app_config):
     vers2 = ""+ p.parse_cmd_resp(Term.exec_cmd(sc_app_path+" -c version"),"version")["version"]
     f.write(',\n"version":"' + vers1 + '/' + vers2 + '"')
     tcsfiles = ""
-    txtfiles = ''
+    txtfiles = ""
+    binfiles = ""
     for c in os.listdir(app_config["8A34001_clk_files_path"]):
         if c.endswith(".tcs"):
             if len(tcsfiles):
@@ -117,9 +118,14 @@ def generate_gen_sc_file(sc_app_path, app_config):
             if len(txtfiles):
                 txtfiles = txtfiles + ","
             txtfiles = txtfiles + '"' + c + '"'
+        if c.endswith(".bin"):
+            if len(binfiles):
+                binfiles = binfiles + ","
+            binfiles = binfiles + '"' + c + '"'
 
     f.write(',\n"8A34001_clk_tcs_files":[' + tcsfiles + ']')
     f.write(',\n"8A34001_clk_txt_files":[' + txtfiles + ']')
+    f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')	
     f.write("\n};")
     f.close()
 
