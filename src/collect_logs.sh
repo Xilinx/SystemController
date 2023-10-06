@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf static/tmp
 LOGNAME=log_$(date +"%d_%m_%Y-%H_%M")
 LOGDIR=/tmp/${LOGNAME}
 mkdir -p $LOGDIR
