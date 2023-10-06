@@ -365,7 +365,6 @@ function upload_clock_files() {
                 });
             });
             document.querySelectorAll('#selectElementId0').forEach((em, i) => {
-            console.log(em)
                 while (em.length > 0) em.remove(em.length - 1);
                 jQuery.each(res["data"]["default"]["binfiles"], function (k, d) {
                     var g = document.createElement("option");
@@ -437,6 +436,22 @@ function fileUploder(formdata, fileObj, select_id) {
             .catch((error) => {
                 console.error('Error:', error);
             });
+}
+function getlogs(){
+    $.ajax({
+        url:"/scriptrunner",
+        method:"GET",
+        data:{},
+        contentType:"application/tar",
+        success: function (res){
+            var link = document.createElement('a')
+            link.href = res.data
+            link.click()
+        },
+        error: function(){
+            console.log("fail");
+        }
+    });
 }
 function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();

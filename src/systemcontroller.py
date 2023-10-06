@@ -46,6 +46,7 @@ api.add_resource(CmdQuery,"/cmdquery")
 api.add_resource(EEPROMDetails,"/eeprom_details")
 api.add_resource(ClockFilesList,"/clock_files")
 api.add_resource(Banner,"/notif")
+api.add_resource(ScriptRunner, "/scriptrunner")
 ## Resources
 import threading
 req_lock = threading.Lock()
