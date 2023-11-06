@@ -638,8 +638,10 @@ function rendertabComponentDiv(title, comp){
                     })
 		    lidiv.appendChild(bt);
                     lidiv.appendChild(bt1);
-                    uldiv.appendChild(lidiv);
-               }else{
+              	    if (general.boardName.toLowerCase()!="vek280"){
+                        uldiv.appendChild(lidiv);
+                    } 
+		}else{
                 var lidiv = document.createElement("li");
                 lidiv.classList.add("tab_subitem");
                 if(j == 0){
