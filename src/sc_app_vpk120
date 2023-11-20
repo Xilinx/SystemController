@@ -53,7 +53,7 @@ ddr
 gpio
 ioexp
 FP
-QSFP
+SFP
 EBM
 FMC
 "
@@ -95,13 +95,20 @@ VCC1V1_LP4"
     fi
     if [ $2 == "listSFP" ]
     then
-        echo "ERROR: SFP operation is not supported"
+    	echo "zSFP-0
+zSFP-1 - Not connected
+zQSFP1
+zQSFP2 - Connection unknown
+zQSFP - Connection unknown"
     fi
     if [ $2 == "listFMC" ]
     then
        echo "ERROR: FMC operation is not supported"
     fi
-
+if [ $2 == "board" ]
+    then
+        echo "VHK158"
+    fi
     if [ $2 == "listpower" ]
     then
         echo "VCCINT
@@ -375,7 +382,8 @@ f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
     fi
         if [ $2 == "gettemp" ]
         then
-        echo "Temperature(C):	46.0"
+     #   echo "Temperature(C):	46.0"
+	echo "ERROR: temperature is not available"
     fi
         if [ $2 == "getioexp" ]
     then
@@ -445,12 +453,14 @@ Die ID:         0x2260"
 
         if [ $2 == "listclock" ]
     then
-        echo "User1 FMC Si570
-Versal Sys Clk Si570
-LPDDR4 Clk1 Si570
-LPDDR4 Clk2 Si570
-LPDDR4 Clk3 Si570
-"
+    	echo "zSFP Si570 - (10.000 MHz - 810.000 MHz)
+User1 FMC2 Si570 - (10.000 MHz - 1250.000 MHz)
+8A34001 FMC2
+Versal Sys Clk Si570 - (10.000 MHz - 160.000 MHz)
+Dimm1 Si570 - (10.000 MHz - 810.000 MHz)
+LPDDR4 CLK1 Si570 - (10.000 MHz - 810.000 MHz)
+LPDDR4 CLK2 Si570 - (10.000 MHz - 810.000 MHz)
+HSPD Si570 - (10.000 MHz - 810.000 MHz)"
     fi
         if [ $2 == "getQSFP" ]
         then
@@ -566,7 +576,11 @@ QSPI Test - Manual Test(7)"
     fi
         if [ $2 == "getSFP" ]
     then
-        echo "ERROR: SFP operation is not supported" 
+     echo " Manufacturer:   MULTILANE-SAL
+Serial Number:  415
+Internal Temperature(C):    27.000
+Supply Voltage(V):  3.30
+Alarm:  0"
     fi
         if [ $2 == "getclock" ]
     then
