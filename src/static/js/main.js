@@ -1392,7 +1392,12 @@ function layoutDesigns(){
         for(var j = 0; j < app_strings.help_content.content[i].content.length; j++){
 		var em7 = document.createElement("li");
 		em7.classList.add("descontent_2");
+		try{
+		em7.innerHTML = app_strings.help_content.content[i].content[j];
+		}
+		catch(err){
 		em7.textContent = app_strings.help_content.content[i].content[j];
+		}
 		em4.append(em7)
                 em3.append(em4);
         }}else{

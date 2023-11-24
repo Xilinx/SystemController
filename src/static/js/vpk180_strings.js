@@ -107,6 +107,11 @@ var app_strings = {
 					"Run jupyter notebook command in system controller prompt to start jupyter notebook server if system controller is set with static ip and notebook web page is not launching from BEAM Tool.",
 				]
                         },*/
+			{
+                                "heading":"WIKI Links:",
+                                "content_type":1,
+                                "content":["Versal Adaptive SoCs : <a href='https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1381400737/Versal+Adaptive+SoCs' target='_blank' style='color: wheat;'>wiki</a>","System Controller Landing Page : <a href='https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/2273738753/Versal+Evaluation+Board+-+System+Controller' target='_blank' style='color: wheat;'>wiki</a>"]
+                        },
                 ],
 
         },
