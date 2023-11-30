@@ -11,13 +11,15 @@ LOGDIR=/tmp/${LOGNAME}
 mkdir -p $LOGDIR
 cp -ar /var/volatile/log $LOGDIR
 journalctl > ${LOGDIR}/journal.log
+journalctl -u system_controller > ${LOGDIR}/sc_appd.log
 dmesg > ${LOGDIR}/dmesg.log
+ps aux > ${LOGDIR}/pslist.log
 
 cd /tmp
-tar czf ${LOGNAME}.tar ${LOGNAME}
+tar czf ${LOGNAME}.tar.gz ${LOGNAME}
 rm -rf ${LOGNAME}
 
 cd /usr/share/scweb
 mkdir -p static/tmp/
-mv /tmp/${LOGNAME}.tar ./static/tmp/
-echo "static/tmp/"${LOGNAME}".tar"
+mv /tmp/${LOGNAME}.tar.gz ./static/tmp/
+echo "static/tmp/"${LOGNAME}".tar.gz"
