@@ -138,6 +138,8 @@ def generate_gen_sc_file(sc_app_path, app_config):
         shutil.copyfile("./static/js/vmk180_strings.js", "./static/js/beam_strings.js")
     elif ("VPK120" in deviname):
         shutil.copyfile("./static/js/vpk120_strings.js", "./static/js/beam_strings.js")
+    elif ("VPK180-112" in deviname):
+        shutil.copyfile("./static/js/vpk180-112_strings.js", "./static/js/beam_strings.js")
     elif ("VPK180" in deviname):
         shutil.copyfile("./static/js/vpk180_strings.js", "./static/js/beam_strings.js")
     elif ("VHK158" in deviname):
