@@ -159,7 +159,14 @@ var theadcomp = document.createElement("thead");
                        em.setAttribute("value", heads[elem]);
                        em.setAttribute("type", "button");
                        em.addEventListener("click",cmdBtnonclick);
-
+		       if(heads[elem+"title"]){
+                       em.setAttribute("title",heads[elem+"title"]);
+                       }
+                       if(heads[elem+"spec_id"]){
+                       em.setAttribute("tip", heads[elem+"spec_id"]);
+                       em.setAttribute("request", "/cmdquery");
+                       em.setAttribute("sc_cmd", "listSFP");
+                       }	
                        tdcomp.appendChild(em)
                     break;
 
@@ -457,7 +464,7 @@ function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();
       var order = e.target.getAttribute("components");
       var tar = e.target.getAttribute("request");
-        if(e.target.value.includes("All")){
+        if(e.target.value.includes("All")||e.target.value.includes("Information")){
             // trigger all othter calls in the current table.
             var erow = $(e.target).parent().parent().parent().parent().find('tbody').find("tr");
             jQuery.each(erow, function(j,trs){
@@ -534,9 +541,9 @@ function cmdBtnonclick(e){
             }
             });
             addsfpTab();
-            var y=document.getElementById(e.target.parentElement.getAttribute("speckey_id"));
-            if (e.target.parentElement.getAttribute("speckey_id") == "SFP_Data" && !$("#SFP_Data").hasClass("hide")){
-            var bodycomp = rendertabComponentDiv(e.target.parentElement.getAttribute("speckey_id"), boardsettingsTab[boardsettingsTab.length-1]);
+            var y=document.getElementById(e.target.getAttribute("tip"));
+            if (e.target.getAttribute("tip") == "SFP_Data" && !$("#SFP_Data").hasClass("hide")){
+            var bodycomp = rendertabComponentDiv(e.target.getAttribute("tip"), boardsettingsTab[boardsettingsTab.length-1]);
             y.remove();
            bodycomp.classList.remove("hide");
            $("#bsettings_subtabs").append(bodycomp);

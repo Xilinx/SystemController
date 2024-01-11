@@ -1185,11 +1185,12 @@ function addsfpTab(){
         if(tds.toLowerCase().endsWith("not connected")==true ){
 	var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,V0,L1,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": " " + tds1
             ,"V0": tdsary[1]
             ,"V0N": ""
             ,"V0V": "io"
+	    ,"L1": ""
             ,"B0": "Get"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":tdsd[1]
@@ -1201,11 +1202,12 @@ function addsfpTab(){
 	}else if(tds.toLowerCase().endsWith("connection unknown")==true){
         var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,V0,L1,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": " " + tds1
             ,"V0": tdsary[1]
             ,"V0N": ""
             ,"V0V": "io"
+	    ,"L1":""
             ,"B0":"Get"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":tdsd[1]
@@ -1216,11 +1218,12 @@ function addsfpTab(){
         }else{
         var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,V0,L1,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": " " + tds
             ,"V0": "-"
             ,"V0N": ""
             ,"V0V": "io"
+	    ,"L1": ""
             ,"B0": "Get"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":tdsd[1]
@@ -1247,10 +1250,14 @@ function addsfpTab(){
         innCompsset.push(eachcomp);
     });
     var headcompsget = {
-            "headcomponents":["C,L0,L1,B0"]
+     	     "headcomponents":["C,L0,L1,B1,B0"]
             ,"L0": "Name"
-            , "L1" : "Info"
-            , "B0" : "Get All"
+            ,"L1" : "Info"
+            ,"B1":"↻ Connections"
+            ,"B1spec_id":"SFP_Data"
+            ,"B1title" : "Refresh module connection status all connected modules"
+            , "B0" : "↻ Information"
+            ,"B0title" : "Gathers complete information about all connected module"	
     };
     var headcompsset = {
             "headcomponents":["C,L0,L1,B0"]
