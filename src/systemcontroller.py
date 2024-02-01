@@ -107,6 +107,21 @@ def generate_gen_sc_file(sc_app_path, app_config):
     vers1 = ""+ app_config["major_version"]+"."+app_config["minor_version"]
     vers2 = ""+ p.parse_cmd_resp(Term.exec_cmd(sc_app_path+" -c version"),"version")["version"]
     f.write(',\n"version":"' + vers1 + '/' + vers2 + '"')
+    lisk = app_config["config_bit_list_cmds"]
+    for ind, k in enumerate(lisk):
+        ke = "describeBIT"
+        if ind > 0:
+            f.write(",\n")
+        response = Term.exec_cmd(sc_app_path + " -c " + k + "\n")
+        resp = p.parse_cmd_resp(response, k)
+        resp = [item.split(' - ')[0] for item in resp]
+        finStr = ""
+        for k in resp:
+            k = '"' + k + '"'
+            if len(finStr):
+                finStr = finStr + ","
+            finStr += '"' + Term.exec_cmd(sc_app_path + " -c " + ke + " -t " + k).strip() + '"'
+        f.write(',\n"Description":[' + finStr + ']')
     tcsfiles = ""
     txtfiles = ""
     binfiles = ""

@@ -962,7 +962,24 @@ function generateBITUI(){
         em = document.createTextNode(c);
         tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
+
+	var info = listsjson_sc.Description;
         tdcomp = document.createElement("td");
+        em =document.createElement("div");
+        em.classList.add("tooltipinfo");
+        em.style.marginTop = "-10px";
+        es = document.createTextNode("\u00A0\u00A0ⓘ");
+        es1= document.createElement("a");
+        es1.classList.add("tooltiptextinfo");
+        if (info.length > 0){
+        es1.textContent = info[j];
+        }
+        em.appendChild(es);
+        em.appendChild(es1);
+        tdcomp.appendChild(em);
+        trcomp.appendChild(tdcomp);        
+
+	tdcomp = document.createElement("td");
         em = document.createElement("div");
         em.classList.add("progress_back_bar");
         em2 = document.createElement("div");
@@ -1030,8 +1047,8 @@ function generateBITUI(){
                     try{
                         //var lst = tds.childNodes[0].classList;
                         //jQuery.each(tds.childNodes, function(k,ele){
-			    var cn = erow[0].childNodes[4].childNodes[0];
-			    var inprg = erow[0].childNodes[2].childNodes[0].childNodes[0];
+			    var cn = erow[0].childNodes[5].childNodes[0];
+			    var inprg = erow[0].childNodes[3].childNodes[0].childNodes[0];
                             //if(inprog.nodeName.toLowerCase() == "div"){
                                 //jQuery.each(ele.childNodes, function(l,inprg){
                                 if(inprg.classList.contains("inprogress_bar_state_inprogress")){
