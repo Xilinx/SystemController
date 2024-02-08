@@ -1376,7 +1376,9 @@ function layoutDesigns(){
         em4.setAttribute("value", app_strings.home_tab.left_pane[i].button_title);
         em4.onclick = function (e){ openInNewTab(e.target.attributes.linkv.value);};
         $("#railcolumn_com").append(em1);
-	$("#railcolumn_com").append(em4);
+	if (app_strings.home_tab.left_pane[i].button_title.length != 0) {
+	        $("#railcolumn_com").append(em4);
+        }
    }
 // center pane
    {
@@ -1395,8 +1397,10 @@ function layoutDesigns(){
         em4.setAttribute("linkv", app_strings.home_tab.center_pane.button_link);
         em4.setAttribute("value", app_strings.home_tab.center_pane.button_title);
         em4.onclick = function (e){ openInNewTab(e.target.attributes.linkv.value);};
-        em3.append(em4)
-        if(app_strings.home_tab.center_pane.button_link.length != 0){
+        if (app_strings.home_tab.center_pane.button_title != 0){
+            em3.append(em4)
+        }
+	if(app_strings.home_tab.center_pane.button_link.length != 0){
             $("#railcolumn_com2").append(em3);
         }
    }

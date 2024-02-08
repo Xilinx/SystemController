@@ -162,7 +162,7 @@ def generate_gen_sc_file(sc_app_path, app_config):
     elif ("VEK280" in deviname):
         shutil.copyfile("./static/js/vek280_strings.js", "./static/js/beam_strings.js")
     else:
-        shutil.copyfile("./static/js/vck190_strings.js", "./static/js/beam_strings.js")
+        shutil.copyfile("./static/js/temp_strings.js", "./static/js/beam_strings.js")
     f = open("./static/js/gen_sc.js", "a")
     f.write("\nvar general = {\n")
     deviname = deviname.strip('\n')
