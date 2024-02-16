@@ -9,7 +9,7 @@ var app_strings = {
 	"app_title":"BOARD EVALUATION AND MANAGEMENT (BEAM) TOOL",
 	"xilinx_icon":"../images/icon.png",
 	"home_tab":{
-		"title":"Welcome & Get Started with Evaluation Kit",
+		"title":"Welcome & Get Started with "+general.boardName+" Evaluation Kit",
 		"left_pane":[
 			{
 				"image":"../static/images/xilinx.png",
