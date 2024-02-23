@@ -21,7 +21,7 @@ fi
 
 ## Run scweb server
 cd /usr/share/scweb/
-python3 systemcontroller.py >/dev/null 2>&1 &
+python3 systemcontroller.py &
 
 ## Run Jupyter notebook
 dev_eeprom=$(find /sys/bus/i2c/devices/*54/ -name eeprom | head -1)
