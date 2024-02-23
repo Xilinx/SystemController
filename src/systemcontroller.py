@@ -147,22 +147,13 @@ def generate_gen_sc_file(sc_app_path, app_config):
 
     # Check device
     deviname = Term.exec_cmd(sc_app_path + " -c board\n")
-    if ("VCK190" in deviname):
-        shutil.copyfile("./static/js/vck190_strings.js", "./static/js/beam_strings.js")
-    elif ("VMK180" in deviname):
-        shutil.copyfile("./static/js/vmk180_strings.js", "./static/js/beam_strings.js")
-    elif ("VPK120" in deviname):
-        shutil.copyfile("./static/js/vpk120_strings.js", "./static/js/beam_strings.js")
-    elif ("VPK180-112" in deviname):
-        shutil.copyfile("./static/js/vpk180-112_strings.js", "./static/js/beam_strings.js")
-    elif ("VPK180" in deviname):
-        shutil.copyfile("./static/js/vpk180_strings.js", "./static/js/beam_strings.js")
-    elif ("VHK158" in deviname):
-        shutil.copyfile("./static/js/vhk158_strings.js", "./static/js/beam_strings.js")
-    elif ("VEK280" in deviname):
-        shutil.copyfile("./static/js/vek280_strings.js", "./static/js/beam_strings.js")
-    else:
-        shutil.copyfile("./static/js/temp_strings.js", "./static/js/beam_strings.js")
+    print("deviname = ", deviname)
+    string_file = "./static/js/" + deviname.lower().strip() + "_strings.js"
+    print("stringfile = ", string_file)
+    if not os.path.exists(string_file):
+        string_file = "./static/js/temp_strings.js"
+    shutil.copyfile(string_file, "./static/js/beam_strings.js")
+
     f = open("./static/js/gen_sc.js", "a")
     f.write("\nvar general = {\n")
     deviname = deviname.strip('\n')
