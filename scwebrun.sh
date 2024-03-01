@@ -43,13 +43,13 @@ fi
 COUNT=30
 IP=`/sbin/ifconfig eth0 | grep 'inet addr' | awk '{print $2}' | awk -F ':' '{print $2}'`
 while [ "$IP" == "" -a "$COUNT" != "0" ]; do
-    echo -n "." >/dev/ttyPS0
+    echo -n "." | tee -a /dev/console
     sleep 1
     COUNT=`expr $COUNT - 1`
     IP=`/sbin/ifconfig eth0 | grep 'inet addr' | awk '{print $2}' | awk -F ':' '{print $2}'`
 done
 
-echo >/dev/ttyPS0
+echo | tee -a /dev/console
 if [ "$IP" != "" ]
 then
 
@@ -58,22 +58,19 @@ then
 *                                      *
 *         BEAM Tool Web Address        *
 *                                      *
-*      http://$IP:50002                                                                    
+*         http://$IP               
+*         http://$(hostname)                       
 *                                      *
 ****************************************       
 EOM
 )
                                                                  
-var=$(echo "$msge"  | sed -E '5s/(.{39})/&\*/')                                 
+var=$(echo "$msge"  | sed -E '5s/(.{39})/&\*/')
+var=$(echo "$var"   | sed -E '6s/(.{39})/&\*/')
                                                    
-cat > /dev/ttyPS0 <<- EOM
-$var 
-
-EOM
-
 else
 
-    cat >/dev/ttyPS0 <<- EOM
+    var=$(cat <<- EOM
 ****************************************
 *                                      *
 *         BEAM Tool Web Address        *
@@ -82,5 +79,8 @@ else
 *                                      *
 ****************************************
 EOM
+)
 
 fi
+
+echo "$var" | tee -a /dev/console

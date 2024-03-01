@@ -233,5 +233,5 @@ if __name__ == '__main__':
             return jsonify({'message': 'Some files could not be uploaded. Allowed file types are txt'})
 
         return jsonify({'message': 'Files successfully uploaded'})
-    app.run(host="0.0.0.0", port=50002, debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)
 
