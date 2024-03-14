@@ -160,6 +160,29 @@ def generate_gen_sc_file(sc_app_path, app_config):
     f.write('"boardName":''"' + deviname + '"')
     f.write("\n}")
     f.close()
+
+    # read QSPI version info
+    f = open("./static/js/gen_sc.js", "a")
+    f.write("\nvar QSPI_version = {\n")
+    qspi = Term.exec_cmd("image_update -p")
+    qspi_list = qspi.strip().split("\n")
+    f.write('"info": [\n')
+    for line in qspi_list:
+        f.write('"' + line.strip() + '",\n')
+    f.write("]\n}\n")
+    f.close()
+
+    # read EMMC version info
+    f = open("./static/js/gen_sc.js", "a")
+    f.write("\nvar EMMC_version = {\n")
+    emmc = Term.exec_cmd("cat /etc/os-release")
+    emmc_list = emmc.strip().split("\n")
+    f.write("'info': [\n")
+    for line in emmc_list:
+        f.write("'" + line.strip() + "',\n")
+    f.write("]\n}\n")
+    f.close()
+
     #   bit tab components
     f = open("./static/js/gen_bit.js", "w")
     p = ParseData()
