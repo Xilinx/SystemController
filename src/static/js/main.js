@@ -1486,10 +1486,12 @@ function layoutDesigns(){
         em9.textContent = EMMC_version.info.join('\n');
         em8.append(em9);
         $("#about_screen").append(em3);
+        if (general.boardName.toLowerCase()!="unknown"){
         if(general.boardName.toLowerCase()!="vck190" && general.boardName.toLowerCase()!="vmk180"){
             $("#about_screen").append(em6);
         }
         $("#about_screen").append(em8);
+        }
    }
 /*	Test the board */
    {
