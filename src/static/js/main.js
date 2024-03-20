@@ -460,6 +460,23 @@ function getlogs(){
         }
     });
 }
+function installboardsetup(){
+    $('#loader').show();
+    $.ajax({
+        url:"/installboard",
+        method:"GET",
+        data:{},
+        contentType:"application/json",
+        success: function (res){
+        $('#loader').hide();
+            alert("Message: " + res.data);
+        },
+        error: function(){
+        $('#loader').hide();
+            console.log("fail");
+        }
+    });
+}
 function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();
       var order = e.target.getAttribute("components");
@@ -1520,6 +1537,11 @@ function layoutDesigns(){
             $("#testboard_home").append(em4);
  	}
    }
+if(general.boardName.toLowerCase()==="unknown"){
+    document.getElementById("testtheboard").remove();
+}else{
+    document.getElementById("boardsupport").remove();
+}
 /*      VERSAL POWER TOOL  */
 if(general.boardName.toLowerCase()=="vck190" || general.boardName.toLowerCase()=="vmk180"){
 	console.log(general.boardName)

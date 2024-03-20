@@ -365,3 +365,18 @@ class ScriptRunner(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
+class InstallBoard(Resource):
+    def get(self, ):
+        try:
+            result = Term.exec_cmd(app_config["boardsetupfile"])
+            resp_jon = {
+                "status":"success"
+                ,"data": result.strip().split("\n")[-1]
+            }
+            return resp_jon
+        except Exception as e:
+            resp_json = {
+                "status":"error"
+                ,"data":{"error":"%s"%e}
+            }
+            return resp_json,500
