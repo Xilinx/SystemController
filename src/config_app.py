@@ -14,7 +14,8 @@ app_config = {
     ,"dev_minor_ver" : "3"
     ,"sc_app_path":"sc_app"
     ,"scriptfile":"/usr/share/system-controller-app/script/collect_logs.sh"
-    ,"boardsetupfile":"/usr/bin/setup_board.sh" 
+    ,"boardsetupfile":"/usr/bin/setup_board.sh"
+    ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
     ,"config_bm_list_cmds":["listbootmode"]

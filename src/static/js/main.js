@@ -1484,30 +1484,17 @@ function layoutDesigns(){
         }
         }
         }
+        $("#about_screen").append(em3);
         var em6 = document.createElement("div");
-        em6.textContent = "QSPI version Information:";
         em6.style.marginTop = "10px";
-        em6.classList.add("subheadings");
         var em7 = document.createElement("p");
         em7.classList.add("descontent");
-        em7.style.fontWeight = "normal";
-        em7.textContent = QSPI_version.info.join('\n');
+        em7.style.fontFamily = "monospace";
+        em7.textContent = version.version_info.join('\n');
+        em7.innerHTML+="<br><br>";
         em6.append(em7);
-        var em8 = document.createElement("div");
-        em8.textContent = "EMMC version Information:";
-        em8.style.marginTop = "10px";
-        em8.classList.add("subheadings");
-        var em9 = document.createElement("p");
-        em9.classList.add("descontent");
-        em9.style.fontWeight = "normal";
-        em9.textContent = EMMC_version.info.join('\n');
-        em8.append(em9);
-        $("#about_screen").append(em3);
         if (general.boardName.toLowerCase()!="unknown"){
-        if(general.boardName.toLowerCase()!="vck190" && general.boardName.toLowerCase()!="vmk180"){
             $("#about_screen").append(em6);
-        }
-        $("#about_screen").append(em8);
         }
    }
 /*	Test the board */
