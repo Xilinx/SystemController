@@ -1533,7 +1533,6 @@ if(general.boardName.toLowerCase()==="unknown"){
 if(general.boardName.toLowerCase()=="vck190" || general.boardName.toLowerCase()=="vmk180"){
 	console.log(general.boardName)
 }else{
-	document.getElementById("linuxprompts").remove();
 	document.getElementById("developusingtools").remove();
 }   
 {
