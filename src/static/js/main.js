@@ -955,80 +955,149 @@ function manualTest(e,cn,inprg,count){
 function restime(){
     return "";//"</br>"+(new Date()).toLocaleTimeString();
 }
-function generateBITUI(){
+function generateBITUI() {
+    var runall = document.createElement("input");
+    runall.setAttribute("type", "button");
+    runall.setAttribute("value", "Run All");
+    runall.classList.add("buttons_it");
+    runall.addEventListener("click", cmdBtnonclick);
+
+    var theadAutomated = document.createElement("thead");
+    var trAutomatedLabel = document.createElement("tr");
+    var thAutomatedLabel = document.createElement("th");
+    thAutomatedLabel.setAttribute("colspan", "6");
+    thAutomatedLabel.textContent = "Automated Tests";
+    thAutomatedLabel.classList.add("table_body");
+    thAutomatedLabel.style.textAlign = "center";
+    thAutomatedLabel.style.borderBottom = "none";
+    trAutomatedLabel.appendChild(thAutomatedLabel);
+    theadAutomated.appendChild(trAutomatedLabel);
+
+    var theadManual = document.createElement("thead");
+    var trManualLabel = document.createElement("tr");
+    var thManualLabel = document.createElement("th");
+    thManualLabel.setAttribute("colspan", "6");
+    thManualLabel.textContent = "Interactive Tests";
+    thManualLabel.classList.add("table_body");
+    thManualLabel.style.textAlign ="center";
+    thManualLabel.style.borderBottom = "none";
+    trManualLabel.appendChild(thManualLabel);
+    theadManual.appendChild(trManualLabel);
+
+    var automatedTbody = document.createElement("tbody");
+    automatedTbody.classList.add("table_body");
+    var manualTbody = document.createElement("tbody");
+    manualTbody.classList.add("table_body");
+
     var tablecomp = document.createElement("table");
     tablecomp.classList.add("testdebug_table");
-    var tbodycomp = document.createElement("tbody");
-    tbodycomp.classList.add("table_body");
 
-    jQuery.each(listsjson_bit.listBIT, function(j, c){
+    var thead = document.createElement("thead");
+    var headerRow = document.createElement("tr");
+    headerRow.style.color="white";
+
+    var headers = ["Checkbox", "BITs List", "Info", "Progress", "Run", "Status"];
+    headers.forEach((headerText, index) => {
+        var th = document.createElement("th");
+        if (headerText === "Checkbox") {
+            var selectAllCheckbox = document.createElement("input");
+            selectAllCheckbox.setAttribute("type", "checkbox");
+            selectAllCheckbox.setAttribute("checked",true);
+            selectAllCheckbox.classList.add("headcheckbox");
+            selectAllCheckbox.addEventListener("change", function() {
+                var checkboxes = tablecomp.querySelectorAll("tbody input[type='checkbox']:not([disabled])");
+                checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+            });
+            th.appendChild(selectAllCheckbox);
+        } else if (headerText === "Run") {
+            th.appendChild(runall);
+        }  else {
+            th.textContent = headerText;
+        }
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+
+    jQuery.each(listsjson_bit.listBIT, function(j, c) {
         var trcomp = document.createElement("tr");
-
+        var man_test = 0;
+        if (c.includes('- Manual Test')) {
+            man_test = c.split(')')[0].split('(')[1];
+            c = c.split(' - Manual Test')[0];
+        }
         var tdcomp = document.createElement("td");
         var em = document.createElement("input");
         em.setAttribute("type", "checkbox");
-        em.setAttribute("checked", true);
-       //tdcomp.appendChild(em)
+        if(man_test){
+            em.setAttribute("disabled", true);
+        }else{
+            em.setAttribute("checked", true);
+        }
+        tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
+
         tdcomp = document.createElement("td");
-        var man_test = 0;
-        if(c.includes('- Manual Test')){
-                man_test = c.split(')')[0].split('(')[1]
-		c=c.split(' - Manual Test')[0];
-	}
         em = document.createTextNode(c);
         tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
 
-	var info = listsjson_sc.Description;
+        var info = listsjson_sc.Description;
         tdcomp = document.createElement("td");
-        em =document.createElement("div");
+        em = document.createElement("div");
         em.classList.add("tooltipinfo");
         em.style.marginTop = "-10px";
-        es = document.createTextNode("\u00A0\u00A0ⓘ");
-        es1= document.createElement("a");
+        em.style.marginLeft = "10px";
+        var es = document.createTextNode("ⓘ");
+        var es1 = document.createElement("a");
         es1.classList.add("tooltiptextinfo");
-        if (info.length > 0){
-        es1.textContent = info[j];
+        if (info.length > 0) {
+            es1.textContent = info[j];
         }
         em.appendChild(es);
         em.appendChild(es1);
         tdcomp.appendChild(em);
-        trcomp.appendChild(tdcomp);        
+        trcomp.appendChild(tdcomp);
 
-	tdcomp = document.createElement("td");
+        tdcomp = document.createElement("td");
         em = document.createElement("div");
         em.classList.add("progress_back_bar");
-        em2 = document.createElement("div");
+        var em2 = document.createElement("div");
         em2.classList.add("progress_inprogress_bar");
         em.appendChild(em2);
         tdcomp.appendChild(em);
-
         trcomp.appendChild(tdcomp);
+
         tdcomp = document.createElement("td");
         em = document.createElement("input");
         em.classList.add("buttons_bit");
         em.setAttribute("type", "button");
         em.setAttribute("value", "Run");
-        em.setAttribute("request",c["url"]);
-        em.setAttribute("target_s",c);
-        em.setAttribute("test_type",man_test);
-        tdcomp.appendChild(em)
+        em.setAttribute("request", c["url"]);
+        em.setAttribute("target_s", c);
+        em.setAttribute("test_type", man_test);
+        tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
 
-
-        var tdcomp = document.createElement("td");
-        var em = document.createElement("div");
-	var ar = document.createElement("a");
+        tdcomp = document.createElement("td");
+        em = document.createElement("div");
+        var ar = document.createElement("a");
         ar.classList.add("tooltiptext");
         em.appendChild(ar);
-        tdcomp.appendChild(em)
+        tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
 
-        tbodycomp.appendChild(trcomp);
+        if (man_test) {
+            manualTbody.appendChild(trcomp);
+        } else {
+            automatedTbody.appendChild(trcomp);
+        }
     });
+    tablecomp.appendChild(thead);
+    tablecomp.appendChild(theadAutomated);
+    tablecomp.appendChild(automatedTbody);
+    tablecomp.appendChild(theadManual);
+    tablecomp.appendChild(manualTbody);
 
-    tablecomp.appendChild(tbodycomp);
     $("#bit_tab_screen").append(tablecomp);
 
 
