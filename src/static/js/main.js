@@ -1424,12 +1424,16 @@ function generateBootModeblock(){
 }
 function navClick(tid){
     console.log(tid);
+    if (tid !== "cockpit" && tid !== "pmdashboard") {
+        hideAllPages();
+    }
     if (tid === "testtheboard") {if(listsjson_sc.listfeature.length == 1 && listsjson_sc.listfeature[0].length == 4){alert("This Feature is not supported.");return;}}
-    hideAllPages();
     if (tid === "testtheboard") {$("#home_screen_db").removeClass('hide');}
     if (tid === "boardsettings") {$("#boardseettings_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
     if (tid === "boardinterfacetest") {$("#testandebug_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
-    if (tid === "demosdesigns") {$("#dnd_screen").removeClass('hide');}
+//    if (tid === "demosdesigns") {$("#dnd_screen").removeClass('hide');}
+    if (tid === "cockpit") {window[app_strings.cockpit.pane[0].button_link]();}
+    if (tid === "pmdashboard") {window[app_strings.pmdashboard.pane[0].button_link]();}    
     if (tid === "developusingtools") {$("#tools_screen").removeClass('hide');}
     if (tid === "linuxprompts") {$("#linuxprompt_screen").removeClass('hide');}
 
