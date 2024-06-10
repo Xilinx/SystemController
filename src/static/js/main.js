@@ -1432,8 +1432,8 @@ function navClick(tid){
     if (tid === "boardsettings") {$("#boardseettings_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
     if (tid === "boardinterfacetest") {$("#testandebug_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
 //    if (tid === "demosdesigns") {$("#dnd_screen").removeClass('hide');}
-    if (tid === "cockpit") {window[app_strings.cockpit.pane[0].button_link]();}
-    if (tid === "pmdashboard") {window[app_strings.pmdashboard.pane[0].button_link]();}    
+    if (tid === "cockpit") {launchacap()}
+    if (tid === "pmdashboard") {launchpmtool()}    
     if (tid === "developusingtools") {$("#tools_screen").removeClass('hide');}
     if (tid === "linuxprompts") {$("#linuxprompt_screen").removeClass('hide');}
 
