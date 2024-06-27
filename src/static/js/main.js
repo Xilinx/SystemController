@@ -116,7 +116,7 @@ function launchacap(){
 }
 function launchpmtool(){
     
-    openInNewTab(getlocallinkwithport("50004"));
+    openInNewTab(getlocallinkwithport("5006"));
 
 }
 function hideAllPages(){
