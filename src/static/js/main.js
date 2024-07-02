@@ -956,6 +956,13 @@ function restime(){
     return "";//"</br>"+(new Date()).toLocaleTimeString();
 }
 function generateBITUI() {
+    var textbox = document.createElement("textarea");
+    textbox.setAttribute("rows","10");
+    textbox.classList.add("textBox");
+    textbox.readOnly = true;
+    textbox.style.resize = 'none';
+    textbox.textContent = BIT_logs.logs.join('\n');
+
     var runall = document.createElement("input");
     runall.setAttribute("type", "button");
     runall.setAttribute("value", "Run All");
@@ -1099,6 +1106,8 @@ function generateBITUI() {
     tablecomp.appendChild(manualTbody);
 
     $("#bit_tab_screen").append(tablecomp);
+    $("#bit_tab_screen").append(textbox);
+    $("#bit_tab_screen").append("<br><br>");
 
 
     $(".buttons_bit").click(function(e){
