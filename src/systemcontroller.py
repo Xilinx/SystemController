@@ -142,7 +142,12 @@ def generate_gen_sc_file(sc_app_path, app_config):
 
     f.write(',\n"8A34001_clk_tcs_files":[' + tcsfiles + ']')
     f.write(',\n"8A34001_clk_txt_files":[' + txtfiles + ']')
-    f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')	
+    f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')
+
+    voltage = Term.exec_cmd(sc_app_path + " -c getvoltage -t VADJ_FMC")
+    voltage_value = voltage.split(':')[1].strip()
+    f.write(',\n"VADJ_FMC_voltage":''' + voltage_value + '')
+	
     f.write("\n};")
     f.close()
 

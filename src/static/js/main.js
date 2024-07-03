@@ -269,17 +269,29 @@ var theadcomp = document.createElement("thead");
 		    break;
                     case "D":
                        var em = document.createElement("select");
-//                       em.classList.add("buttons");
-                       //em.setAttribute("type", "text");
                        em.setAttribute("reqkey", c[elem]);
-//                       em.setAttribute("reqkey",c[elem+"K"]);
-                        jQuery.each(c[elem+"V"], function(j, n){  
-				var g = document.createElement("option");
-	                        g.setAttribute('value',n);
-        	                g.innerHTML = ""+n+" "+c[elem+"N"];
-				em.appendChild(g);
-                        });
-			
+                       var voltage = parseFloat(listsjson_sc.VADJ_FMC_voltage);
+                       var closedValue = null;
+                       var closedDiff = Infinity;
+                       jQuery.each(c[elem + "V"], function (j, n) {
+                           var ddValue = parseFloat(n);
+                           var diff = Math.abs(ddValue - voltage);
+                                console.log(diff)
+                           if (diff < closedDiff) {
+                               closedDiff = diff;
+                               closedValue = ddValue;
+                           }
+                           var g = document.createElement("option");
+                           g.setAttribute('value', n);
+                           g.innerHTML = "" + n + " " + c[elem + "N"];
+                           em.appendChild(g);
+                       });
+                       jQuery.each(em.options, function (index, option) {
+                           if (parseFloat(option.value) === closedValue) {
+                               option.selected = true;
+                           }
+                       });
+
                        tdcomp.appendChild(em)
                     break;
                     default:
