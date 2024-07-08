@@ -70,7 +70,19 @@ class ReqFunctions:
     def jnlink():
         jnu = jnurl()
         return {"status":"success","data":jnu},200
-
+    def bitlog():
+        res = SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
+        if res.startswith("cat: can't open"):
+            resp_json = {
+                "status":"error"
+                ,"data":""
+            }
+        else:
+            resp_json = {
+                "status":"success"
+                ,"data":res
+            }
+        return resp_json
 class FuncReq(Resource):
     def get(self,):
         req = request.args.get('func')
@@ -83,6 +95,8 @@ class FuncReq(Resource):
             return ReqFunctions.polls(params)
         if req.startswith('jnlink'):
             return ReqFunctions.jnlink()
+        if req.startswith('bitlog'):
+            return ReqFunctions.bitlog()
         if req.startswith('setbootmode'):
             if checkJNK() >= 1: 
                 resp_json = { 

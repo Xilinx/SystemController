@@ -16,6 +16,7 @@ app_config = {
     ,"scriptfile":"/usr/share/system-controller-app/script/collect_logs.sh"
     ,"boardsetupfile":"/usr/bin/setup_board.sh"
     ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
+    ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
     ,"config_bm_list_cmds":["listbootmode"]

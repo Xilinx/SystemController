@@ -729,6 +729,10 @@ padding-top:10px;
 .testdebug_table td, tr{
 padding: 5px;
 }
+.textBox{
+width:90%;
+resize: none;
+}
 /* Rounded sliders */
 .slider.round {
 border-radius: 34px;

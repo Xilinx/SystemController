@@ -109,6 +109,20 @@ function jnurllink(){
             }
     });
 }
+function bitLog(){
+    $.ajax({
+        url: "/funcreq",
+        type: "get",
+        data:{"func":"bitlog","params":""},
+        dataType: "json",
+        success: function(res){
+            var result = res.data;
+            var textbox = $(".textBox");
+            textbox.append(result);
+            return;
+        }
+    });
+}
 function launchacap(){
     
     openInNewTab(getlocallinkwithport("49995"));
@@ -946,7 +960,10 @@ function manualTest(e,cn,inprg,count){
 		inprg.className="";
 		inprg.classList.add("progress_inprogress_bar");
 		setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-          } 
+          },
+      	   complete: function(res){
+          	 bitLog();
+       	  } 
          
      });				
 
@@ -956,12 +973,6 @@ function restime(){
     return "";//"</br>"+(new Date()).toLocaleTimeString();
 }
 function generateBITUI() {
-    var textbox = document.createElement("textarea");
-    textbox.setAttribute("rows","10");
-    textbox.classList.add("textBox");
-    textbox.readOnly = true;
-    textbox.style.resize = 'none';
-    textbox.textContent = BIT_logs.logs.join('\n');
 
     var runall = document.createElement("input");
     runall.setAttribute("type", "button");
@@ -1106,9 +1117,15 @@ function generateBITUI() {
     tablecomp.appendChild(manualTbody);
 
     $("#bit_tab_screen").append(tablecomp);
+
+    var textbox = document.createElement("textarea");
+    textbox.setAttribute("rows","25");
+    textbox.classList.add("textBox");
+    textbox.readOnly = true;
+    textbox.style.resize = 'none';
+    textbox.append("BIT logs:\n");
     $("#bit_tab_screen").append(textbox);
     $("#bit_tab_screen").append("<br><br>");
-
 
     $(".buttons_bit").click(function(e){
     
@@ -1216,7 +1233,10 @@ function generateBITUI() {
 						inprg.className="";
 						inprg.classList.add("progress_inprogress_bar");
 						setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-					}
+					},
+					complete: function(res){
+					    bitLog();
+                    			}
 				    });
 
 				}

@@ -174,18 +174,6 @@ def generate_gen_sc_file(sc_app_path, app_config):
     f.write("    ]\n};\n")
     f.close()
 
-    # read bit.log file
-    f=open("./static/js/gen_sc.js","a")
-    f.write("\nvar BIT_logs = {\n")
-    bits=Term.exec_cmd("cat /usr/share/system-controller-app/.sc_app/BIT.log")
-    bit_log = bits.strip().split("\n")
-    f.write('"logs": [\n')
-    for line in bit_log:
-        line = line.replace('^M','')
-        f.write('"' + line.strip() + '",\n')
-    f.write("]\n}\n")
-    f.close()
-
     #   bit tab components
     f = open("./static/js/gen_bit.js", "w")
     p = ParseData()
