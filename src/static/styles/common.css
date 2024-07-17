@@ -730,8 +730,14 @@ padding-top:10px;
 padding: 5px;
 }
 .textBox{
-width:90%;
+width:96%;
+padding:10px;
 resize: none;
+}
+.textboxbuttons{
+    position: absolute;
+    right: 3%;
+    margin-top: 5px;
 }
 /* Rounded sliders */
 .slider.round {

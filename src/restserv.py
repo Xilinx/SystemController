@@ -70,19 +70,6 @@ class ReqFunctions:
     def jnlink():
         jnu = jnurl()
         return {"status":"success","data":jnu},200
-    def bitlog():
-        res = SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
-        if res.startswith("cat: can't open"):
-            resp_json = {
-                "status":"error"
-                ,"data":""
-            }
-        else:
-            resp_json = {
-                "status":"success"
-                ,"data":res
-            }
-        return resp_json
 class FuncReq(Resource):
     def get(self,):
         req = request.args.get('func')
@@ -95,8 +82,6 @@ class FuncReq(Resource):
             return ReqFunctions.polls(params)
         if req.startswith('jnlink'):
             return ReqFunctions.jnlink()
-        if req.startswith('bitlog'):
-            return ReqFunctions.bitlog()
         if req.startswith('setbootmode'):
             if checkJNK() >= 1: 
                 resp_json = { 
@@ -240,6 +225,12 @@ class CmdQuery(Resource):
                     "status":"success"
                     ,"data":result
                 }
+                if req.startswith("BIT") or "BIT" in req:
+                    bitLog=SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
+                    if bitLog.startswith("cat: can't open") or "cat: can't open" in bitLog:
+                        resp_json["data"]["bitlogs"] = ""
+                    else:
+                        resp_json["data"]["bitlogs"] = bitLog
             return resp_json,200
         except Exception as e:
             resp_json = {
@@ -394,3 +385,4 @@ class InstallBoard(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
+

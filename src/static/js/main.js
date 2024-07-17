@@ -109,20 +109,6 @@ function jnurllink(){
             }
     });
 }
-function bitLog(){
-    $.ajax({
-        url: "/funcreq",
-        type: "get",
-        data:{"func":"bitlog","params":""},
-        dataType: "json",
-        success: function(res){
-            var result = res.data;
-            var textbox = $(".textBox");
-            textbox.append(result);
-            return;
-        }
-    });
-}
 function launchacap(){
     
     openInNewTab(getlocallinkwithport("49995"));
@@ -949,6 +935,10 @@ function manualTest(e,cn,inprg,count){
                 if(res) {
 			manTestResAnalysis(res,e,cn,inprg,count)
  		}
+                if (res.data.bitlogs) {
+                    var textbox = $(".textBox")[0];
+                    textbox.value = res.data.bitlogs + "\n";
+                }
           },
 	  error: function(){
 		inprg.className="";
@@ -960,9 +950,6 @@ function manualTest(e,cn,inprg,count){
 		inprg.className="";
 		inprg.classList.add("progress_inprogress_bar");
 		setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-          },
-      	   complete: function(res){
-          	 bitLog();
        	  } 
          
      });				
@@ -974,7 +961,7 @@ function restime(){
 }
 function generateBITUI() {
 
-    var runall = document.createElement("input");
+       var runall = document.createElement("input");
     runall.setAttribute("type", "button");
     runall.setAttribute("value", "Run All");
     runall.classList.add("buttons_it");
@@ -1055,6 +1042,7 @@ function generateBITUI() {
         trcomp.appendChild(tdcomp);
 
         tdcomp = document.createElement("td");
+        tdcomp.style.width = "15vw";
         em = document.createTextNode(c);
         tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
@@ -1077,6 +1065,7 @@ function generateBITUI() {
         trcomp.appendChild(tdcomp);
 
         tdcomp = document.createElement("td");
+        tdcomp.style.width = "50vw";
         em = document.createElement("div");
         em.classList.add("progress_back_bar");
         var em2 = document.createElement("div");
@@ -1110,25 +1099,60 @@ function generateBITUI() {
             automatedTbody.appendChild(trcomp);
         }
     });
+    var theadtextbox = document.createElement("thead");
+    var trtextboxLabel = document.createElement("tr");
+    var thtextboxLabel = document.createElement("th");
+    thtextboxLabel.setAttribute("colspan", "6");
+    thtextboxLabel.textContent = "BITs Info";
+    thtextboxLabel.classList.add("table_body");
+    thtextboxLabel.style.textAlign = "center";
+    thtextboxLabel.style.borderBottom = "none";
+    trtextboxLabel.appendChild(thtextboxLabel);
+    theadtextbox.appendChild(trtextboxLabel);
+
     tablecomp.appendChild(thead);
     tablecomp.appendChild(theadAutomated);
     tablecomp.appendChild(automatedTbody);
     tablecomp.appendChild(theadManual);
     tablecomp.appendChild(manualTbody);
+    tablecomp.appendChild(theadtextbox);
 
-    $("#bit_tab_screen").append(tablecomp);
 
     var textbox = document.createElement("textarea");
     textbox.setAttribute("rows","25");
     textbox.classList.add("textBox");
     textbox.readOnly = true;
     textbox.style.resize = 'none';
-    textbox.append("BIT logs:\n");
+    textbox.style.overflow = 'auto';
+
+    var buttonGroup = document.createElement("div");
+    buttonGroup.classList.add("textboxbuttons");
+   // Create the clear button
+    var clearButton = document.createElement("input");
+    clearButton.setAttribute("type", "button");
+    clearButton.style.marginRight = "5px";
+    clearButton.setAttribute("value", "clear");
+    clearButton.addEventListener("click", function() {
+        textbox.value = '';
+    });
+    // Create the copy button
+    var copyButton = document.createElement("input");
+    copyButton.setAttribute("type", "button");
+    copyButton.setAttribute("value", "copy");
+    copyButton.addEventListener("click", function() {
+        textbox.select();
+        document.execCommand('copy');
+        alert('Text copied to clipboard!');
+    });
+    buttonGroup.append(clearButton);
+    buttonGroup.append(copyButton);
+    $("#bit_tab_screen").append(tablecomp);
+    $("#bit_tab_screen").append(buttonGroup);
     $("#bit_tab_screen").append(textbox);
     $("#bit_tab_screen").append("<br><br>");
 
-    $(".buttons_bit").click(function(e){
-    
+
+    $(".buttons_bit").click(function(e){ 
     console.log("button clicked"+e.target.getAttribute("target_s"));
 /*        var erow = $(e.target).parent().parent().parent().parent().find('tbody').find("tr");
             jQuery.each(erow, function(j,trs){
@@ -1224,6 +1248,10 @@ function generateBITUI() {
 								setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
 							}
 						}
+						if (res.data.bitlogs) {
+                         			    var textbox = $(".textBox")[0];
+			                            textbox.value += res.data.bitlogs + "\n";
+                      				}
 					},
 					error: function(){
 						cn.childNodes[0].innerHTML = 'Network Issue'+restime();
@@ -1233,9 +1261,6 @@ function generateBITUI() {
 						inprg.className="";
 						inprg.classList.add("progress_inprogress_bar");
 						setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-					},
-					complete: function(res){
-					    bitLog();
                     			}
 				    });
 
