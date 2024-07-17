@@ -430,12 +430,18 @@ function addClockTab(){
             ,"components": innCompsreset
             , "headcomponents" : headcompsreset
             }
-	    ,{
-            "subtype":"tab_plus_button"
-            ,"name": "Upload clock files"
-            }	
             ]
             };
+            jQuery.each(listsjson_sc["listclock"] , function(i, tds1){
+            tdsary = tds1.split(" - (");
+            tds = tdsary[0];
+            if(tds.startsWith("8A34001") == true) {
+                    dict.components.push({
+                        "subtype": "tab_plus_button",
+                        "name": "Upload clock files"
+                    });
+            }
+            });
     boardsettingsTab.push(dict);
 }
 function addVoltageTab(){

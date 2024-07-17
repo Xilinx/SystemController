@@ -276,7 +276,6 @@ var theadcomp = document.createElement("thead");
                        jQuery.each(c[elem + "V"], function (j, n) {
                            var ddValue = parseFloat(n);
                            var diff = Math.abs(ddValue - voltage);
-                                console.log(diff)
                            if (diff < closedDiff) {
                                closedDiff = diff;
                                closedValue = ddValue;
@@ -674,9 +673,7 @@ function rendertabComponentDiv(title, comp){
                     })
 		    lidiv.appendChild(bt);
                     lidiv.appendChild(bt1);
-              	    if (general.boardName.toLowerCase()!="vek280"){
-                        uldiv.appendChild(lidiv);
-                    } 
+                    uldiv.appendChild(lidiv);
 		}else{
                 var lidiv = document.createElement("li");
                 lidiv.classList.add("tab_subitem");
