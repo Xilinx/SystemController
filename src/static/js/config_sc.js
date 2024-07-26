@@ -569,32 +569,37 @@ function addVoltageTab(){
     boardsettingsTab.push(dict);
 }
 function addVadjTab(){
-        var innCompsget = [];
+var innCompsget = [];
+var innCompsboot = [];
+jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
+        tdsary = tds.split(" - (");
+        tds = tdsary[0];
+    if (tds.includes("FMC") || tds.includes("VCCO_706")){
         var getv = {
             "type":"list"
             ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
-            ,"L0": "Get VADJ_FMC"
+            ,"L0": "Get "+tds
             ,"V0": "- V"
             ,"V0N": "V"
             ,"V0V": "voltage"
             ,"B0": "Get"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"getvoltage"
-            , "B0target": "VADJ_FMC"
+            , "B0target": tds
             , "B0params":""
         };
         innCompsget.push(getv);
         var getv2 = {
             "type":"list"
             ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
-            ,"L0": "Get VADJ_FMC All"
+            ,"L0": "Get "+tds+" All"
             ,"V0": "- V"
             ,"V0N": "V"
             ,"V0V": "io"
             ,"B0": "Get"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"getvoltage"
-            , "B0target": "VADJ_FMC"
+            , "B0target": tds
             , "B0params":"all"
         };
         innCompsget.push(getv2);
@@ -602,36 +607,35 @@ function addVadjTab(){
      var setv = {
             "type":"list" 
             ,"components" : ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
-            ,"L0": "Set VADJ_FMC"
+            ,"L0": "Set "+tds
             ,"D0": "value"
             ,"D0N": "V"
             ,"D0V": ["0.0","1.2","1.5"]
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"setvoltage"
-            , "B0target": "VADJ_FMC"
+            , "B0target":tds
             , "B0params":""
         };
         if(general.boardName.toLowerCase()!="vek280"){
         innCompsget.push(setv);
         }
-        var innCompsboot = [];
-
      var bootv = {
             "type":"list"
             ,"components" : ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
-            ,"L0": "Set On-Boot VADJ"
+            ,"L0": "Set On-Boot "+tds
             ,"D0": "value"
             ,"D0N": "V"
             ,"D0V": ["0.0","1.2","1.5"]
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"setbootvoltage"
-            , "B0target": "VADJ_FMC"
+            , "B0target": tds
             , "B0params":""
         };
         innCompsboot.push(bootv);
-
+       }
+});
     var headcompsset = {
             "headcomponents":["C,L0,L1,B0"]
             ,"L0": "Voltage Name"
