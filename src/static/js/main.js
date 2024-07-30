@@ -937,7 +937,7 @@ function manualTest(e,cn,inprg,count){
  		}
                 if (res.data.bitlogs) {
                     var textbox = $(".textBox")[0];
-                    textbox.value = res.data.bitlogs + "\n";
+                    textbox.value += res.data.bitlogs + "\n";
                 }
           },
 	  error: function(){
