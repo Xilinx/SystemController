@@ -1476,6 +1476,118 @@ function generateBootModeblock(){
 //        console.log(e.target.innerHTML);
 //    });
 }
+
+//Upload PDI section
+function generatePDIblock(){
+    var block = $("#detectPDI");
+    var em1 = document.createElement("div");
+    em1.classList.add("details_info");
+    block.append(em1)
+    var es = document.createTextNode("Browse PDI:");
+    em1.appendChild(es);
+
+    var button = document.createElement("input");
+    button.classList.add("buttons");
+    button.classList.add("dash_bm");
+    button.id="uploadpdi";
+    button.setAttribute("value", "Browse");
+    button.setAttribute("type", "file");
+    button.addEventListener('change', function(event) {
+    var file = event.target.files[0];
+    if (file) {
+        var formData = new FormData();
+        formData.append("file", file);
+        fileUploder(formData, file, "PDIselectionOption1");
+        fileUploder(formData, file, "PDIselectionOption2");
+    }
+});
+    em1.appendChild(button);
+//load PDI section
+    var em2 = document.createElement("p");
+    em2.classList.add("details_info");
+//    em2.style.borderBottom = 'none';
+    em2.id="loadpdi";
+    block.append(em2);
+
+    var es2 = document.createTextNode(" Load PDI:");
+    em2.append(es2);
+    var m = document.createElement("select");
+    m.id = "PDIselectionOption1";
+    m.classList.add("dash_bm");
+    em2.appendChild(m);
+    var button2 = document.createElement("input");
+    button2.classList.add("buttons");
+    button2.classList.add("dash_bm");
+    button2.id="loadpdibuttonid";
+    button2.setAttribute("value", "Load");
+    button2.setAttribute("type", "button");
+    em2.appendChild(button2);
+
+    var smload1 = document.createElement("div");
+    smload1.id="loadpdiloadid";
+    smload1.style.display = 'inline-block';
+    smload1.style.marginLeft = '15px';
+    em2.append(smload1);
+    var tip1=document.createElement("a");
+    tip1.id="loadpdistatus";
+    tip1.classList.add("tooltiptext");
+    smload1.append(tip1);
+//Set boot PDI section
+    var em4 = document.createElement("p");
+    em4.classList.add("details_info");
+    em4.id="loadpdi";
+    block.append(em4);
+
+    var es3 = document.createTextNode(" Set boot PDI:");
+    em4.append(es3);
+    var m = document.createElement("select");
+    m.id = "PDIselectionOption2";
+    m.classList.add("dash_bm");
+    em4.appendChild(m);
+    var button3 = document.createElement("input");
+    button3.classList.add("buttons");
+    button3.classList.add("dash_bm");
+    button3.id="setbootpdibuttonid";
+    button3.setAttribute("value", "Load");
+    button3.setAttribute("type", "button");
+    em4.appendChild(button3);
+
+    var smload2 = document.createElement("div");
+    smload2.id="setbootpdiloadid";
+    smload2.style.display = 'inline-block';
+    smload2.style.marginLeft = '15px';
+    em4.append(smload2);
+    var tip2=document.createElement("a");
+    tip2.id="setbootpdistatus";
+    tip2.classList.add("tooltiptext");
+    smload2.append(tip2);
+//Reset boot PDI section
+    var em6 = document.createElement("p");
+    em6.classList.add("details_info");
+    em6.id="loadpdi";
+    block.append(em6);
+
+    var es4 = document.createTextNode(" Reset boot PDI:");
+    em6.append(es4);
+    var button4 = document.createElement("input");
+    button4.classList.add("buttons");
+    button4.classList.add("dash_bm");
+    button4.id="resetbootpdibuttonid";
+    button4.setAttribute("value", "Reset");
+    button4.setAttribute("type", "button");
+    em6.appendChild(button4);
+
+    var smload3 = document.createElement("div");
+    smload3.id="resetbootpdiloadid";
+    smload3.style.display = 'inline-block';
+    smload3.style.marginLeft = '15px';
+    em6.append(smload3);
+    var tip3=document.createElement("a");
+    tip3.id="resetbootpdistatus";
+    tip3.classList.add("tooltiptext");
+    smload3.append(tip3);
+
+}    
 function navClick(tid){
     console.log(tid);
     if (tid !== "cockpit" && tid !== "pmdashboard") {
