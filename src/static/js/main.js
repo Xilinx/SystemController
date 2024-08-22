@@ -268,19 +268,56 @@ var theadcomp = document.createElement("thead");
                         tdcomp.appendChild(em)
 		    break;
                     case "D":
-                       var em = document.createElement("select");
-//                       em.classList.add("buttons");
-                       //em.setAttribute("type", "text");
-                       em.setAttribute("reqkey", c[elem]);
-//                       em.setAttribute("reqkey",c[elem+"K"]);
-                        jQuery.each(c[elem+"V"], function(j, n){  
-				var g = document.createElement("option");
-	                        g.setAttribute('value',n);
-        	                g.innerHTML = ""+n+" "+c[elem+"N"];
-				em.appendChild(g);
-                        });
-			
-                       tdcomp.appendChild(em)
+                        var em = document.createElement("select");
+                        em.setAttribute("reqkey", c[elem]);
+                        var closedValue = null;
+                        var closedDiff = Infinity;
+                        targ = ""
+                        if ("listvoltage" in listsjson_sc && listsjson_sc.listvoltage.length > 0) {
+                            for (var i = 0; i < listsjson_sc.listvoltage.length; i++) {
+                                var voltageValue = listsjson_sc.listvoltage[i];
+                                if (voltageValue.includes("FMC") || voltageValue.includes("VCCO_706")) {
+                                    targ = voltageValue.split(" - (")[0];
+                                }
+                            }
+                        }
+                        if (c[elem + "F"]) {
+                            $.ajax({
+                                url: "/cmdquery",
+                                type: "GET",
+                                data: { "sc_cmd": c[elem + "sc_cmd"], "target": "" + targ, "params": "" },
+                                dataType: "json",
+                                success: function (res) {
+                                    voltage = parseFloat(Object.values(res.data)[0]);
+                                    jQuery.each(c[elem + "V"], function (j, n) {
+                                        var ddValue = parseFloat(n);
+                                        var diff = Math.abs(ddValue - voltage);
+                                        if (diff < closedDiff) {
+                                            closedDiff = diff;
+                                            closedValue = ddValue;
+                                        }
+                                        var g = document.createElement("option");
+                                        g.setAttribute('value', n);
+                                        g.innerHTML = "" + n + " " + c[elem + "N"];
+                                        em.appendChild(g);
+                                    });
+                                    jQuery.each(em.options, function (index, option) {
+                                        if (parseFloat(option.value) === closedValue) {
+                                            option.selected = true;
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            jQuery.each(c[elem + "V"], function (j, n) {
+                                var g = document.createElement("option");
+                                g.setAttribute('value', n);
+                                g.innerHTML = "" + n + " " + c[elem + "N"];
+                                em.appendChild(g);
+                            });
+                        }
+                        tdcomp.appendChild(em)
                     break;
                     default:
                         console.log("Not Defined  ========= "+ elem);

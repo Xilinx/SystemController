@@ -32,6 +32,7 @@
                     , "B0params":""
                     ,"E0": "configuration"                  // Edit field with key to send as parameter in ajay req.
                     ,"E0K": "W"                             // Notation of key. Not required.
+                    ,"D0F" true                             // fetch the data to dropdown
 
 */
 var listResponseDictionary = {
@@ -605,6 +606,8 @@ jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
             ,"D0": "value"
             ,"D0N": "V"
             ,"D0V": ["0.0","1.2","1.5"]
+            ,"D0sc_cmd":"getvoltage"
+            ,"D0F":true
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"setvoltage"
@@ -621,6 +624,8 @@ jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
             ,"D0": "value"
             ,"D0N": "V"
             ,"D0V": ["0.0","1.2","1.5"]
+            ,"D0sc_cmd":"getvoltage"
+            ,"D0F":true
             ,"B0": "Set"
             ,"B0A": "/cmdquery"
             ,"B0sc_cmd":"setbootvoltage"
