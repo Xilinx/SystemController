@@ -514,6 +514,34 @@ function installboardsetup(){
         }
     });
 }
+function exportCSV() {
+    var button = document.getElementById("exportCSV");
+    var originalText = button.innerHTML;
+    button.innerHTML = "Please wait..";
+    button.disabled = true;
+    $.ajax({
+        url:"/exportcsv",
+        method:"GET",
+        data:{},
+        contentType:"text/csv",
+        success: function (res) {
+        var blob=new Blob([res], { type: "text/csv" });
+        var link=document.createElement('a');
+        link.href=window.URL.createObjectURL(blob);
+        link.download= res.data.split('/').pop();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+         button.innerHTML = originalText;
+         button.disabled = false;
+        },
+        error: function(){
+            console.log("Failed to export CSV.");
+                button.innerHTML = originalText;
+                button.disabled = false;
+        }
+    });
+}
 function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();
       var order = e.target.getAttribute("components");

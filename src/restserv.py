@@ -385,4 +385,20 @@ class InstallBoard(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
-
+class exportCSV(Resource):
+    def get(self, ):
+        try:
+            result = Term.exec_cmd("python3 /usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 60 -s 1")
+            print(result)
+            resp_jon = {
+                "status":"success"
+                ,"data": result.strip().split(" - ")[-1]
+            }
+            print(resp_jon.data)
+            return resp_jon
+        except Exception as e:
+            resp_json = {
+                "status":"error"
+                ,"data":{"error":"%s"%e}
+            }
+            return resp_json,500
