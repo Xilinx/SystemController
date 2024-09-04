@@ -43,6 +43,7 @@ def index():
 api.add_resource(Poll,"/poll")
 api.add_resource(FuncReq,"/funcreq")
 api.add_resource(CmdQuery,"/cmdquery")
+api.add_resource(MultiCmdQuery,"/multicmdquery")
 api.add_resource(EEPROMDetails,"/eeprom_details")
 api.add_resource(ClockFilesList,"/clock_files")
 api.add_resource(Banner,"/notif")

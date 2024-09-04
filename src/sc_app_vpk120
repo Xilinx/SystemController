@@ -587,6 +587,12 @@ Alarm:  0"
         echo "Frequency(Hz):  156249999"
     fi
 
+    if [ $2 == "getmeasuredclock" ]
+    then
+        # echo "Frequency(Hz):  156249999"
+        echo "Not Available"
+    fi
+
 
     shift # past argument
     shift # past value

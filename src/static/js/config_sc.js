@@ -250,32 +250,38 @@ function addClockTab(){
         if(tds.startsWith("8A34001") == true) {
         var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,V0,V1,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": tds
             ,"V0": "-"
             ,"V0N": ""
             ,"V0V": "frequency"
+            ,"V1": "-"
+            ,"V1N": ""
+            ,"V1V": "measuredfrequency"
             ,"B0": "Get"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"getclock"
-            , "B0target": tds
-            , "B0params":""
+            ,"B0A": "/multicmdquery"
+            ,"B0sc_cmd":JSON.stringify(["getclock","getmeasuredclock"])
+            , "B0target": JSON.stringify([tds,tds])
+            , "B0params":JSON.stringify(["",""])
         };
         innCompsget.push(eachcomp);
 
         }else{
         var eachcomp = {
             "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+            ,"components" : ["C,L0,V0,V1,B0"]    // Checkbox, Label, editfield, info, button, Action
             ,"L0": tds
             ,"V0": "- MHz"
             ,"V0N": "MHz"
             ,"V0V": "frequency"
+            ,"V1": "- MHz"
+            ,"V1N": "MHz"
+            ,"V1V": "measuredfrequency"
             ,"B0": "Get"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"getclock"
-            , "B0target": tds
-            , "B0params":""
+            ,"B0A": "/multicmdquery"
+            ,"B0sc_cmd":JSON.stringify(["getclock","getmeasuredclock"])
+            , "B0target": JSON.stringify([tds,tds])
+            , "B0params":JSON.stringify(["",""])
         };
         innCompsget.push(eachcomp);
         }
@@ -376,9 +382,10 @@ function addClockTab(){
         innCompsreset.push(eachcomp);
     });
     var headcompsget = {
-            "headcomponents":["C,L0,L1,B0"]
+            "headcomponents":["C,L0,L1,L2,B0"]
             ,"L0": "Clock Name"
             , "L1" : "Frequency"
+            , "L2" : "Measured Frequency"
             , "B0" : "Get All"
     };
     var headcompsset = {

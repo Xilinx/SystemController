@@ -189,6 +189,58 @@ class ClockFilesList(Resource):
             }
             print('e',e)
             return resp_json,500
+class MultiCmdQuery(Resource):
+    def get(self,):
+        try:
+            if checkJNK() >= 1: 
+                resp_json = { 
+                    "status":"error"
+                    ,"data": "Notebook kernel is running. Please stop running kernel."
+                }                       
+                return resp_json,200
+
+            reqa = request.args.get('sc_cmd')
+            ereq = json.loads(reqa)
+            tara = request.args.get('target')
+            etar = json.loads(tara)
+            params_req = request.args.get('params')
+            eparams = json.loads(params_req)
+            result = {}
+            for i,a in enumerate(ereq):
+                
+                req = ereq[i]
+                tar = etar[i]
+                params = eparams[i].split(",")
+                paramStr = eparams[i].replace(","," ")
+                
+                try:
+                    cmd_gen = sc_app_path+" -c " + req
+                    if len(tar):
+                        cmd_gen = cmd_gen + " -t '" + tar + "'"
+                    if len(params) and len(params[0]):
+                        cmd_gen = cmd_gen + " -v '" + paramStr + "'"
+                    response = Term.exec_cmd(cmd_gen)
+                except Exception as d:
+                    print(d)
+                if response.startswith("ERROR:") or "ERROR:" in response:
+                    result = response
+                else : 
+                    result1 = parse.parse_cmd_resp(response, req, tar, params);
+                    result.update(result1)
+            resp_json = {
+                "status":"success"
+                ,"data":result
+            }
+            
+            return resp_json,200
+        except Exception as e:
+            resp_json = {
+                "status":"error"
+                ,"data":{"error":"%s"%e}
+            }
+            return resp_json,500
+
+
 class CmdQuery(Resource):
     def get(self,):
         try:
