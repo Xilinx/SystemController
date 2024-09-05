@@ -70,7 +70,6 @@ class ReqFunctions:
     def jnlink():
         jnu = jnurl()
         return {"status":"success","data":jnu},200
-
 class FuncReq(Resource):
     def get(self,):
         req = request.args.get('func')
@@ -278,6 +277,12 @@ class CmdQuery(Resource):
                     "status":"success"
                     ,"data":result
                 }
+                if req.startswith("BIT") or "BIT" in req:
+                    bitLog=SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
+                    if bitLog.startswith("cat: can't open") or "cat: can't open" in bitLog:
+                        resp_json["data"]["bitlogs"] = ""
+                    else:
+                        resp_json["data"]["bitlogs"] = bitLog
             return resp_json,200
         except Exception as e:
             resp_json = {
@@ -425,6 +430,23 @@ class InstallBoard(Resource):
                 "status":"success"
                 ,"data": result.strip().split("\n")[-1]
             }
+            return resp_jon
+        except Exception as e:
+            resp_json = {
+                "status":"error"
+                ,"data":{"error":"%s"%e}
+            }
+            return resp_json,500
+class exportCSV(Resource):
+    def get(self, ):
+        try:
+            result = Term.exec_cmd("python3"+app_config["csvFIlePath"])
+            print(result)
+            resp_jon = {
+                "status":"success"
+                ,"data": result.strip().split(" - ")[-1]
+            }
+            print(resp_jon.data)
             return resp_jon
         except Exception as e:
             resp_json = {

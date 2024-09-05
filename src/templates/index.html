@@ -15,6 +15,7 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/common.js') }}?version={{ versioning }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/gen_sc.js') }}?version={{ versioning }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/beam_strings.js') }}?version={{ versioning }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/strings_append.js') }}?version={{ versioning }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/gen_bit.js') }}?version={{ versioning }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/gen_bm.js') }}?version={{ versioning }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/config_sc.js') }}?version={{ versioning }}"></script>
@@ -47,6 +48,7 @@
         <li class="tabitem_right">ABOUT</li>
         <li class="tabitem_right">HELP</li>
         <button class="logs_button" id="getLogs" onclick="getlogs()">Get Logs</button>
+        <button class="logs_button" id="exportCSV" onclick="exportCSV()">Export CSV</button>
 	</ul>
       </nav>
     </div>
@@ -135,6 +137,9 @@
           <p class='details_info'>SD1_3.0 : [1110]</p>-->
 
       </div>
+        <div class="block_dashboard_1" id="detectPDI">
+            <p class='details_info'> <b>Upload PDI:</b></p>
+        </div>
     </span>
   </div>
 <!-- Help Screen-->

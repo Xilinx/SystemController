@@ -268,30 +268,56 @@ var theadcomp = document.createElement("thead");
                         tdcomp.appendChild(em)
 		    break;
                     case "D":
-                       var em = document.createElement("select");
-                       em.setAttribute("reqkey", c[elem]);
-                       var voltage = parseFloat(listsjson_sc.VADJ_FMC_voltage);
-                       var closedValue = null;
-                       var closedDiff = Infinity;
-                       jQuery.each(c[elem + "V"], function (j, n) {
-                           var ddValue = parseFloat(n);
-                           var diff = Math.abs(ddValue - voltage);
-                           if (diff < closedDiff) {
-                               closedDiff = diff;
-                               closedValue = ddValue;
-                           }
-                           var g = document.createElement("option");
-                           g.setAttribute('value', n);
-                           g.innerHTML = "" + n + " " + c[elem + "N"];
-                           em.appendChild(g);
-                       });
-                       jQuery.each(em.options, function (index, option) {
-                           if (parseFloat(option.value) === closedValue) {
-                               option.selected = true;
-                           }
-                       });
-
-                       tdcomp.appendChild(em)
+                        var em = document.createElement("select");
+                        em.setAttribute("reqkey", c[elem]);
+                        var closedValue = null;
+                        var closedDiff = Infinity;
+                        targ = ""
+                        if ("listvoltage" in listsjson_sc && listsjson_sc.listvoltage.length > 0) {
+                            for (var i = 0; i < listsjson_sc.listvoltage.length; i++) {
+                                var voltageValue = listsjson_sc.listvoltage[i];
+                                if (voltageValue.includes("FMC") || voltageValue.includes("VCCO_706")) {
+                                    targ = voltageValue.split(" - (")[0];
+                                }
+                            }
+                        }
+                        if (c[elem + "F"]) {
+                            $.ajax({
+                                url: "/cmdquery",
+                                type: "GET",
+                                data: { "sc_cmd": c[elem + "sc_cmd"], "target": "" + targ, "params": "" },
+                                dataType: "json",
+                                success: function (res) {
+                                    voltage = parseFloat(Object.values(res.data)[0]);
+                                    jQuery.each(c[elem + "V"], function (j, n) {
+                                        var ddValue = parseFloat(n);
+                                        var diff = Math.abs(ddValue - voltage);
+                                        if (diff < closedDiff) {
+                                            closedDiff = diff;
+                                            closedValue = ddValue;
+                                        }
+                                        var g = document.createElement("option");
+                                        g.setAttribute('value', n);
+                                        g.innerHTML = "" + n + " " + c[elem + "N"];
+                                        em.appendChild(g);
+                                    });
+                                    jQuery.each(em.options, function (index, option) {
+                                        if (parseFloat(option.value) === closedValue) {
+                                            option.selected = true;
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            jQuery.each(c[elem + "V"], function (j, n) {
+                                var g = document.createElement("option");
+                                g.setAttribute('value', n);
+                                g.innerHTML = "" + n + " " + c[elem + "N"];
+                                em.appendChild(g);
+                            });
+                        }
+                        tdcomp.appendChild(em)
                     break;
                     default:
                         console.log("Not Defined  ========= "+ elem);
@@ -485,6 +511,30 @@ function installboardsetup(){
         error: function(){
         $('#loader').hide();
             console.log("fail");
+        }
+    });
+}
+function exportCSV() {
+    var button = document.getElementById("exportCSV");
+    var originalText = button.innerHTML;
+    button.innerHTML = "Please wait..";
+    button.disabled = true;
+    $.ajax({
+        url:"/exportcsv",
+        method:"GET",
+        data:{},
+        contentType:"json",
+        success: function (res) {
+        var link = document.createElement('a');
+            link.href = res.data;
+            link.click();
+         button.innerHTML = originalText;
+         button.disabled = false;
+        },
+        error: function(){
+            console.log("Failed to export CSV.");
+                button.innerHTML = originalText;
+                button.disabled = false;
         }
     });
 }
@@ -944,6 +994,10 @@ function manualTest(e,cn,inprg,count){
                 if(res) {
 			manTestResAnalysis(res,e,cn,inprg,count)
  		}
+                if (res.data.bitlogs) {
+                    var textbox = $(".textBox")[0];
+                    textbox.value += res.data.bitlogs + "\n";
+                }
           },
 	  error: function(){
 		inprg.className="";
@@ -955,7 +1009,7 @@ function manualTest(e,cn,inprg,count){
 		inprg.className="";
 		inprg.classList.add("progress_inprogress_bar");
 		setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-          } 
+       	  } 
          
      });				
 
@@ -965,7 +1019,8 @@ function restime(){
     return "";//"</br>"+(new Date()).toLocaleTimeString();
 }
 function generateBITUI() {
-    var runall = document.createElement("input");
+
+       var runall = document.createElement("input");
     runall.setAttribute("type", "button");
     runall.setAttribute("value", "Run All");
     runall.classList.add("buttons_it");
@@ -1046,6 +1101,7 @@ function generateBITUI() {
         trcomp.appendChild(tdcomp);
 
         tdcomp = document.createElement("td");
+        tdcomp.style.width = "15vw";
         em = document.createTextNode(c);
         tdcomp.appendChild(em);
         trcomp.appendChild(tdcomp);
@@ -1068,6 +1124,7 @@ function generateBITUI() {
         trcomp.appendChild(tdcomp);
 
         tdcomp = document.createElement("td");
+        tdcomp.style.width = "50vw";
         em = document.createElement("div");
         em.classList.add("progress_back_bar");
         var em2 = document.createElement("div");
@@ -1101,17 +1158,60 @@ function generateBITUI() {
             automatedTbody.appendChild(trcomp);
         }
     });
+    var theadtextbox = document.createElement("thead");
+    var trtextboxLabel = document.createElement("tr");
+    var thtextboxLabel = document.createElement("th");
+    thtextboxLabel.setAttribute("colspan", "6");
+    thtextboxLabel.textContent = "BITs Info";
+    thtextboxLabel.classList.add("table_body");
+    thtextboxLabel.style.textAlign = "center";
+    thtextboxLabel.style.borderBottom = "none";
+    trtextboxLabel.appendChild(thtextboxLabel);
+    theadtextbox.appendChild(trtextboxLabel);
+
     tablecomp.appendChild(thead);
     tablecomp.appendChild(theadAutomated);
     tablecomp.appendChild(automatedTbody);
     tablecomp.appendChild(theadManual);
     tablecomp.appendChild(manualTbody);
+    tablecomp.appendChild(theadtextbox);
 
+
+    var textbox = document.createElement("textarea");
+    textbox.setAttribute("rows","25");
+    textbox.classList.add("textBox");
+    textbox.readOnly = true;
+    textbox.style.resize = 'none';
+    textbox.style.overflow = 'auto';
+
+    var buttonGroup = document.createElement("div");
+    buttonGroup.classList.add("textboxbuttons");
+   // Create the clear button
+    var clearButton = document.createElement("input");
+    clearButton.setAttribute("type", "button");
+    clearButton.style.marginRight = "5px";
+    clearButton.setAttribute("value", "clear");
+    clearButton.addEventListener("click", function() {
+        textbox.value = '';
+    });
+    // Create the copy button
+    var copyButton = document.createElement("input");
+    copyButton.setAttribute("type", "button");
+    copyButton.setAttribute("value", "copy");
+    copyButton.addEventListener("click", function() {
+        textbox.select();
+        document.execCommand('copy');
+        alert('Text copied to clipboard!');
+    });
+    buttonGroup.append(clearButton);
+    buttonGroup.append(copyButton);
     $("#bit_tab_screen").append(tablecomp);
+    $("#bit_tab_screen").append(buttonGroup);
+    $("#bit_tab_screen").append(textbox);
+    $("#bit_tab_screen").append("<br><br>");
 
 
-    $(".buttons_bit").click(function(e){
-    
+    $(".buttons_bit").click(function(e){ 
     console.log("button clicked"+e.target.getAttribute("target_s"));
 /*        var erow = $(e.target).parent().parent().parent().parent().find('tbody').find("tr");
             jQuery.each(erow, function(j,trs){
@@ -1207,6 +1307,10 @@ function generateBITUI() {
 								setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
 							}
 						}
+						if (res.data.bitlogs) {
+                         			    var textbox = $(".textBox")[0];
+			                            textbox.value += res.data.bitlogs + "\n";
+                      				}
 					},
 					error: function(){
 						cn.childNodes[0].innerHTML = 'Network Issue'+restime();
@@ -1216,7 +1320,7 @@ function generateBITUI() {
 						inprg.className="";
 						inprg.classList.add("progress_inprogress_bar");
 						setTimeout(()=>{inprg.innerHTML = "Fail";inprg.classList.add("inprogress_bar_state_fail"); },10);
-					}
+                    			}
 				    });
 
 				}
@@ -1431,6 +1535,118 @@ function generateBootModeblock(){
 //        console.log(e.target.innerHTML);
 //    });
 }
+
+//Upload PDI section
+function generatePDIblock(){
+    var block = $("#detectPDI");
+    var em1 = document.createElement("div");
+    em1.classList.add("details_info");
+    block.append(em1)
+    var es = document.createTextNode("Browse PDI:");
+    em1.appendChild(es);
+
+    var button = document.createElement("input");
+    button.classList.add("buttons");
+    button.classList.add("dash_bm");
+    button.id="uploadpdi";
+    button.setAttribute("value", "Browse");
+    button.setAttribute("type", "file");
+    button.addEventListener('change', function(event) {
+    var file = event.target.files[0];
+    if (file) {
+        var formData = new FormData();
+        formData.append("file", file);
+        fileUploder(formData, file, "PDIselectionOption1");
+        fileUploder(formData, file, "PDIselectionOption2");
+    }
+});
+    em1.appendChild(button);
+//load PDI section
+    var em2 = document.createElement("p");
+    em2.classList.add("details_info");
+//    em2.style.borderBottom = 'none';
+    em2.id="loadpdi";
+    block.append(em2);
+
+    var es2 = document.createTextNode(" Load PDI:");
+    em2.append(es2);
+    var m = document.createElement("select");
+    m.id = "PDIselectionOption1";
+    m.classList.add("dash_bm");
+    em2.appendChild(m);
+    var button2 = document.createElement("input");
+    button2.classList.add("buttons");
+    button2.classList.add("dash_bm");
+    button2.id="loadpdibuttonid";
+    button2.setAttribute("value", "Load");
+    button2.setAttribute("type", "button");
+    em2.appendChild(button2);
+
+    var smload1 = document.createElement("div");
+    smload1.id="loadpdiloadid";
+    smload1.style.display = 'inline-block';
+    smload1.style.marginLeft = '15px';
+    em2.append(smload1);
+    var tip1=document.createElement("a");
+    tip1.id="loadpdistatus";
+    tip1.classList.add("tooltiptext");
+    smload1.append(tip1);
+//Set boot PDI section
+    var em4 = document.createElement("p");
+    em4.classList.add("details_info");
+    em4.id="loadpdi";
+    block.append(em4);
+
+    var es3 = document.createTextNode(" Set boot PDI:");
+    em4.append(es3);
+    var m = document.createElement("select");
+    m.id = "PDIselectionOption2";
+    m.classList.add("dash_bm");
+    em4.appendChild(m);
+    var button3 = document.createElement("input");
+    button3.classList.add("buttons");
+    button3.classList.add("dash_bm");
+    button3.id="setbootpdibuttonid";
+    button3.setAttribute("value", "Load");
+    button3.setAttribute("type", "button");
+    em4.appendChild(button3);
+
+    var smload2 = document.createElement("div");
+    smload2.id="setbootpdiloadid";
+    smload2.style.display = 'inline-block';
+    smload2.style.marginLeft = '15px';
+    em4.append(smload2);
+    var tip2=document.createElement("a");
+    tip2.id="setbootpdistatus";
+    tip2.classList.add("tooltiptext");
+    smload2.append(tip2);
+//Reset boot PDI section
+    var em6 = document.createElement("p");
+    em6.classList.add("details_info");
+    em6.id="loadpdi";
+    block.append(em6);
+
+    var es4 = document.createTextNode(" Reset boot PDI:");
+    em6.append(es4);
+    var button4 = document.createElement("input");
+    button4.classList.add("buttons");
+    button4.classList.add("dash_bm");
+    button4.id="resetbootpdibuttonid";
+    button4.setAttribute("value", "Reset");
+    button4.setAttribute("type", "button");
+    em6.appendChild(button4);
+
+    var smload3 = document.createElement("div");
+    smload3.id="resetbootpdiloadid";
+    smload3.style.display = 'inline-block';
+    smload3.style.marginLeft = '15px';
+    em6.append(smload3);
+    var tip3=document.createElement("a");
+    tip3.id="resetbootpdistatus";
+    tip3.classList.add("tooltiptext");
+    smload3.append(tip3);
+
+}    
 function navClick(tid){
     console.log(tid);
     if (tid !== "cockpit" && tid !== "pmdashboard") {
@@ -1554,7 +1770,12 @@ function layoutDesigns(){
         for(var j = 0; j < app_strings.about_content.content[i].content.length; j++){
 		var em7 = document.createElement("li");
 		em7.classList.add("descontent_2");
+		try{
+		em7.innerHTML = app_strings.about_content.content[i].content[j];
+		}
+		catch(err){
 		em7.textContent = app_strings.about_content.content[i].content[j];
+		}
 		em4.append(em7)
                 em3.append(em4);
         }}else{

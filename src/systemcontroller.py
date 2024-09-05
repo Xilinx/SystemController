@@ -49,6 +49,7 @@ api.add_resource(ClockFilesList,"/clock_files")
 api.add_resource(Banner,"/notif")
 api.add_resource(ScriptRunner, "/scriptrunner")
 api.add_resource(InstallBoard, "/installboard")
+api.add_resource(exportCSV, "/exportcsv")
 ## Resources
 import threading
 req_lock = threading.Lock()
