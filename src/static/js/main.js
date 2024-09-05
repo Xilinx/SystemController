@@ -523,15 +523,11 @@ function exportCSV() {
         url:"/exportcsv",
         method:"GET",
         data:{},
-        contentType:"text/csv",
+        contentType:"json",
         success: function (res) {
-        var blob=new Blob([res], { type: "text/csv" });
-        var link=document.createElement('a');
-        link.href=window.URL.createObjectURL(blob);
-        link.download= res.data.split('/').pop();
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        var link = document.createElement('a');
+            link.href = res.data;
+            link.click();
          button.innerHTML = originalText;
          button.disabled = false;
         },

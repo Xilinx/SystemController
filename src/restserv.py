@@ -388,7 +388,7 @@ class InstallBoard(Resource):
 class exportCSV(Resource):
     def get(self, ):
         try:
-            result = Term.exec_cmd("python3 /usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 60 -s 1")
+            result = Term.exec_cmd("python3"+app_config["csvFIlePath"])
             print(result)
             resp_jon = {
                 "status":"success"
