@@ -15,6 +15,7 @@ from jnservice import *
 # TODO :: Change parse data static to dynamic class for realtime data.
 #parse = ParseDataStatic()
 parse = ParseData()
+deviname = ""
 
 sc_app_path = app_config["sc_app_path"]
 class BootMode:
@@ -166,6 +167,7 @@ class ClockFilesList(Resource):
                         upload_bin_files.append(os.path.splitext(c)[0])
             final_upload_list = list(set(upload_txt_files+upload_tcs_files))
             upload_bin_files = list(set(upload_bin_files))
+            pdifiles = os.listdir(app_config["PDIFilePath"] + deviname.strip()) if os.path.exists(app_config["PDIFilePath"] + deviname.strip()) else []
             resp_json = {
                 "status": "success"
                 , "data": {
@@ -177,9 +179,11 @@ class ClockFilesList(Resource):
                         "finaluploadlist": final_upload_list
                         , "binfiles": upload_bin_files
                     }
+                    , "pdi": {
+                        "pdi_files":pdifiles
+                    }
                 }
             }
-            print(resp_json)
             return resp_json,200
         except Exception as e:
             resp_json = {

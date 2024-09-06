@@ -17,7 +17,8 @@ app_config = {
     ,"boardsetupfile":"/usr/bin/setup_board.sh"
     ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
     ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"
-    ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 60 -s 1 -o ./static/tmp/"
+    ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 10 -s 1 -o ./static/tmp/"
+    ,"PDIFilePath":"/usr/share/system-controller-app/BIT/"
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
     ,"config_bm_list_cmds":["listbootmode"]
@@ -26,5 +27,7 @@ app_config = {
     ,"8A34001_clk_files_path":"/usr/share/system-controller-app/BIT/clock_files/"
     ,"board_file_path":"/home/root/.sc_app/board"
     ,"uploaded_files_path":"/usr/share/system-controller-app/.sc_app/clock_files/"	
+    ,"allowed_clock_files":['txt', 'tcs', 'bin']
+    ,"allowed_pdi_files":['pdi']
 }
 

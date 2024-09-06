@@ -423,6 +423,15 @@ function upload_clock_files() {
                     em.children[1].appendChild(g);
                 });
             });
+            document.querySelectorAll('#PDIselectionOption1 , #PDIselectionOption2').forEach((em, i) => {
+                while (em.length > 0) em.remove(em.length - 1);
+                jQuery.each(res["data"]["pdi"]["pdi_files"], function (k, d) {
+                    var g = document.createElement("option");
+                    g.setAttribute('value', d);
+                    g.innerHTML = d
+                    em.appendChild(g);
+                });
+            });
         },
         error: function (res) {
             console.log(res)
@@ -435,7 +444,7 @@ function fileUploder(formdata, fileObj, select_id) {
           return;
           }
     var dupFound = false;
-    var sIds = ["selectElementId0", "selectElementId1"]
+    var sIds = ["selectElementId0", "selectElementId1","PDIselectionOption1","PDIselectionOption2"]
     jQuery.each(sIds, function (t, l) {
 
         document.querySelectorAll('#' + l).forEach((em, i) => {
@@ -1551,6 +1560,7 @@ function generatePDIblock(){
     button.id="uploadpdi";
     button.setAttribute("value", "Browse");
     button.setAttribute("type", "file");
+    button.setAttribute('accept', '.pdi');
     button.addEventListener('change', function(event) {
     var file = event.target.files[0];
     if (file) {
@@ -1645,6 +1655,106 @@ function generatePDIblock(){
     tip3.id="resetbootpdistatus";
     tip3.classList.add("tooltiptext");
     smload3.append(tip3);
+  
+    $('#PDIselectionOption1').change(function(e){
+        document.getElementById("loadpdiloadid").className = "";
+        document.getElementById("loadpdistatus").innerHTML = "";
+    });
+    $('#loadpdibuttonid').click(function(e){
+        document.getElementById("loadpdistatus").innerHTML = "";
+        document.getElementById("loadpdiloadid").className = "";
+        document.getElementById("loadpdiloadid").classList.add("ministatusloading");
+
+        $.ajax({
+        url: "/cmdquery",
+        type: 'GET',
+        dataType: 'json',
+        data:{"sc_cmd":"loadPDI", "target": $('#PDIselectionOption1').val().split("\t")[0], "params":""},
+        success: function (res){
+        console.log("chinna",res)
+            document.getElementById("loadpdiloadid").className = "";
+                if (res.status === 'error'){
+			document.getElementById("loadpdiloadid").classList.add("tooltip");
+			document.getElementById("loadpdistatus").innerHTML = res.data;
+		    	document.getElementById("loadpdiloadid").classList.add("ministatusfail");
+                }else{
+			document.getElementById("loadpdiloadid").classList.add("tooltip");
+			document.getElementById("loadpdistatus").innerHTML = "Success";
+		   	document.getElementById("loadpdiloadid").classList.add("ministatussuccess");
+                }
+        },
+            error: function(){
+                document.getElementById("loadpdiloadid").className = "";
+                document.getElementById("loadpdiloadid").classList.add("ministatusfail");
+                document.getElementById("loadpdiloadid").classList.add("tooltip");
+                document.getElementById("loadpdistatus").innerHTML = "Network Error";
+	    }
+        });
+    });
+    $('#PDIselectionOption2').change(function(e){
+        document.getElementById("setbootpdiloadid").className = "";
+        document.getElementById("setbootpdistatus").innerHTML = "";
+    });
+    $('#setbootpdibuttonid').click(function(e){
+        document.getElementById("setbootpdistatus").innerHTML = "";
+        document.getElementById("setbootpdiloadid").className = "";
+        document.getElementById("setbootpdiloadid").classList.add("ministatusloading");
+
+        $.ajax({
+        url: "/cmdquery",
+        type: 'GET',
+        dataType: 'json',
+        data:{"sc_cmd":"setbootPDI", "target": $('#PDIselectionOption2').val().split("\t")[0], "params":""},
+        success: function (res){
+            document.getElementById("setbootpdiloadid").className = "";
+                if (res.status === 'error'){
+			document.getElementById("setbootpdiloadid").classList.add("tooltip");
+			document.getElementById("setbootpdistatus").innerHTML = res.data;
+		    	document.getElementById("setbootpdiloadid").classList.add("ministatusfail");
+                }else{
+			document.getElementById("setbootpdiloadid").classList.add("tooltip");
+			document.getElementById("setbootpdistatus").innerHTML = "Success";
+		   	document.getElementById("setbootpdiloadid").classList.add("ministatussuccess");
+                }
+        },
+            error: function(){
+                document.getElementById("setbootpdiloadid").className = "";
+                document.getElementById("setbootpdiloadid").classList.add("ministatusfail");
+                document.getElementById("setbootpdiloadid").classList.add("tooltip");
+                document.getElementById("setbootpdistatus").innerHTML = "Network Error";
+	    }
+        });
+    });
+    $('#resetbootpdibuttonid').click(function (e) {
+    document.getElementById("resetbootpdistatus").innerHTML = "";
+    document.getElementById("resetbootpdiloadid").className = "";
+    document.getElementById("resetbootpdiloadid").classList.add("ministatusloading");
+
+     $.ajax({
+            url: "/cmdquery",
+            type: 'GET',
+            dataType: 'json',
+            data:{"sc_cmd":"resetbootPDI", "target":"", "params":""},
+        success: function (res){
+		document.getElementById("resetbootpdiloadid").className = "";
+                if (res.status === 'error'){
+			document.getElementById("resetbootpdiloadid").classList.add("tooltip");
+			document.getElementById("resetbootpdistatus").innerHTML = res.data;
+			document.getElementById("resetbootpdiloadid").classList.add("ministatusfail");
+                }else{
+			document.getElementById("resetbootpdiloadid").classList.add("tooltip");
+			document.getElementById("resetbootpdistatus").innerHTML = "Success";
+			document.getElementById("resetbootpdiloadid").classList.add("ministatussuccess");
+                }
+	},
+        error: function(){
+			document.getElementById("resetbootpdiloadid").className = "";
+			document.getElementById("resetbootpdiloadid").classList.add("ministatusfail");
+			document.getElementById("resetbootpdiloadid").classList.add("tooltip");
+			document.getElementById("resetbootpdistatus").innerHTML = "Network Error";
+	}
+    });
+    });
 
 }    
 function navClick(tid){
