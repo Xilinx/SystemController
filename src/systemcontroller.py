@@ -43,6 +43,7 @@ def index():
 api.add_resource(Poll,"/poll")
 api.add_resource(FuncReq,"/funcreq")
 api.add_resource(CmdQuery,"/cmdquery")
+api.add_resource(MultiCmdQuery,"/multicmdquery")
 api.add_resource(EEPROMDetails,"/eeprom_details")
 api.add_resource(ClockFilesList,"/clock_files")
 api.add_resource(Banner,"/notif")
@@ -143,7 +144,12 @@ def generate_gen_sc_file(sc_app_path, app_config):
 
     f.write(',\n"8A34001_clk_tcs_files":[' + tcsfiles + ']')
     f.write(',\n"8A34001_clk_txt_files":[' + txtfiles + ']')
-    f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')	
+    f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')
+
+    voltage = Term.exec_cmd(sc_app_path + " -c getvoltage -t VADJ_FMC")
+    voltage_value = voltage.split(':')[1].strip()
+    f.write(',\n"VADJ_FMC_voltage":''"' + voltage_value + '"')
+	
     f.write("\n};")
     f.close()
 

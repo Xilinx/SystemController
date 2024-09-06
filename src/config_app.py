@@ -13,7 +13,7 @@ app_config = {
     ,"dev_for_major_ver" : "1"
     ,"dev_minor_ver" : "3"
     ,"sc_app_path":"sc_app"
-    ,"scriptfile":"/usr/share/system-controller-app/script/collect_logs.sh"
+    ,"scriptfile":"/usr/bin/collect_logs.sh"
     ,"boardsetupfile":"/usr/bin/setup_board.sh"
     ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
     ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"

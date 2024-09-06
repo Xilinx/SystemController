@@ -18,6 +18,8 @@ class Parse:
             return self.parseGetVoltage(data)
         elif(component == "getclock"):
             return self.parseGetClock(data,targ)
+        elif(component == "getmeasuredclock"):
+            return self.parseGetMeasuredClock(data,targ)
         elif(component == "BIT"):
             return self.parseBit(data)
         elif(component == "getddr"):
@@ -155,6 +157,17 @@ class ParseData(Parse):
         else:
             resar = data.strip().split(":")
             res["frequency"] = resar[1]
+        return res
+    def parseGetMeasuredClock(self,data,targ):
+        res = {}
+        if targ.startswith('8A34001'):
+            res["measuredfrequency"] = data.replace("\n","</br>")
+        else:
+            resar = data.strip().split(":")
+            if len(resar) > 1:
+                res["measuredfrequency"] = resar[1]
+            else:
+                res["measuredfrequency"] = "-"
         return res
     def parsegpio(self,data):
         resar = data.strip().split(":")

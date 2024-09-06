@@ -723,9 +723,7 @@ function rendertabComponentDiv(title, comp){
                     })
 		    lidiv.appendChild(bt);
                     lidiv.appendChild(bt1);
-              	    if (general.boardName.toLowerCase()!="vek280"){
-                        uldiv.appendChild(lidiv);
-                    } 
+                    uldiv.appendChild(lidiv);
 		}else{
                 var lidiv = document.createElement("li");
                 lidiv.classList.add("tab_subitem");
