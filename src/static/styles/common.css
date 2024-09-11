@@ -795,6 +795,12 @@ display: flex;
 float:left;width:100%;height:100%;
 margin:10px 0px 0px 0px;
 }
+.bit_image_bg{
+float:left;
+width:100%;
+height:100%;
+margin:10px 0px 10px 0px;
+}
 .image_dashboard{
 width:90%;
 height:500px;
