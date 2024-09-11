@@ -1,6 +1,6 @@
 ##
 # Copyright (c) 2020 - 2022 Xilinx, Inc.  All rights reserved.
-# Copyright (c) 2022 - 2023 Advanced Micro Devices, Inc.  All rights reserved.
+# Copyright (c) 2022 - 2024 Advanced Micro Devices, Inc.  All rights reserved.
 #
 # SPDX-License-Identifier: MIT
 ##
@@ -80,7 +80,7 @@ def unlock_for_next_req(response):
 def crstring():
     return '''/*
 * Copyright (c) 2020 - 2022 Xilinx, Inc.  All rights reserved.
-* Copyright (c) 2022 - 2023 Advanced Micro Devices, Inc.  All rights reserved.
+* Copyright (c) 2022 - 2024 Advanced Micro Devices, Inc.  All rights reserved.
 *
 * SPDX-License-Identifier: MIT
 */

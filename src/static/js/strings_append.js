@@ -1,8 +1,8 @@
 /*
- * * Copyright (c) 2024 Advanced Micro Devices, Inc.  All rights reserved.
- * *
- * * SPDX-License-Identifier: MIT
- * */
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.  All rights reserved.
+ *
+ * SPDX-License-Identifier: MIT
+ */
 
 /* this file is copy github links to all board string files. */
 /* this file will be loaded after board_strings files. */
