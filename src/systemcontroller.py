@@ -152,16 +152,12 @@ def generate_gen_sc_file(sc_app_path, app_config):
     f.write(',\n"8A34001_clk_txt_files":[' + txtfiles + ']')
     f.write(',\n"8A34001_clk_bin_files":[' + binfiles + ']')
 
-    voltage = Term.exec_cmd(sc_app_path + " -c getvoltage -t VADJ_FMC")
-    voltage_value = voltage.split(':')[1].strip()
-    f.write(',\n"VADJ_FMC_voltage":''"' + voltage_value + '"')
-	
     f.write("\n};")
     f.close()
 
     # Check device
     deviname = Term.exec_cmd(sc_app_path + " -c board\n")
-    restserv.deviname=deviname
+    app_config["deviname"] = deviname.strip()
     print("deviname = ", deviname)
     string_file = "./static/js/" + deviname.lower().strip() + "_strings.js"
     print("stringfile = ", string_file)
@@ -256,7 +252,7 @@ if __name__ == '__main__':
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             elif file and allowed_pdi_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['PDI_UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['PDI_UPLOAD_FOLDER']+app_config["deviname"], filename))
             else:
                 errors = True
 

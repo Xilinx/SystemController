@@ -18,7 +18,7 @@ app_config = {
     ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
     ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"
     ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 10 -s 1 -o ./static/tmp/"
-    ,"PDIFilePath":"/usr/share/system-controller-app/BIT/"
+    ,"PDIFilePath":"/usr/share/system-controller-app/BIT/" #device name is added in systemcontroller.py file
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
     ,"config_bm_list_cmds":["listbootmode"]

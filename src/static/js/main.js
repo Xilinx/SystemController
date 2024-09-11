@@ -2129,6 +2129,7 @@ $(document).ready(function () {
     generateBoardSettingsUI();
     generateBITUI();
     generateBootModeblock();
+    generatePDIblock();
     $('.app-title:empty').hide();
       $('#top_menu li').click(function (e) {
 

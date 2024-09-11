@@ -167,7 +167,7 @@ class ClockFilesList(Resource):
                         upload_bin_files.append(os.path.splitext(c)[0])
             final_upload_list = list(set(upload_txt_files+upload_tcs_files))
             upload_bin_files = list(set(upload_bin_files))
-            pdifiles = os.listdir(app_config["PDIFilePath"] + deviname.strip()) if os.path.exists(app_config["PDIFilePath"] + deviname.strip()) else []
+            pdifiles = os.listdir(app_config["PDIFilePath"]+app_config["deviname"]) if os.path.exists(app_config["PDIFilePath"]+app_config["deviname"]) else []
             resp_json = {
                 "status": "success"
                 , "data": {
