@@ -15,7 +15,7 @@ app_config = {
     ,"sc_app_path":"sc_app"
     ,"scriptfile":"/usr/bin/collect_logs.sh"
     ,"boardsetupfile":"/usr/bin/setup_board.sh"
-    ,"versioninfo":"/usr/share/system-controller-app/script/version_info.sh" 
+    ,"versioninfo":"/usr/bin/version_info.sh" 
     ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"
     ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 10 -s 1 -o ./static/tmp/"
     ,"PDIFilePath":"/usr/share/system-controller-app/BIT/" #device name is added in systemcontroller.py file
