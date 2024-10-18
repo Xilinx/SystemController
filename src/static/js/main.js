@@ -525,28 +525,124 @@ function installboardsetup(){
     });
 }
 function exportCSV() {
-    var button = document.getElementById("exportCSV");
-    var originalText = button.innerHTML;
-    button.innerHTML = "Please wait..";
-    button.disabled = true;
-    $.ajax({
-        url:"/exportcsv",
-        method:"GET",
-        data:{},
-        contentType:"json",
-        success: function (res) {
-        var link = document.createElement('a');
-            link.href = res.data;
-            link.click();
-         button.innerHTML = originalText;
-         button.disabled = false;
-        },
-        error: function(){
-            console.log("Failed to export CSV.");
-                button.innerHTML = originalText;
-                button.disabled = false;
-        }
-    });
+    var popupmain = document.createElement('div');
+    popupmain.className = 'popup-background';
+    popupmain.style.display = "block";
+
+    var popup = document.createElement('div');
+    popup.setAttribute('id', 'popup');
+    popup.className = 'popup-content';
+
+    var popupHeader = document.createElement('div');
+    popupHeader.className = 'popup-header';
+
+    var heading = document.createElement('h2');
+    heading.style.textAlign = 'center';
+    heading.setAttribute('popupid', '1');
+    heading.id = 'popupheadingid';
+    heading.textContent = 'Export CSV File';
+    popupHeader.appendChild(heading);
+
+    var popupMessage = document.createElement('p');
+    popupMessage.innerHTML = "Export history of Power, Current and Voltage rails value into CSV file. <br> Please select seconds to capture:";
+    popupMessage.style.padding = "10px";
+    popupMessage.style.lineHeight = "25px";
+
+    var inputField = document.createElement('input');
+    inputField.setAttribute('type', 'number');
+    inputField.setAttribute('value', 5);
+    inputField.min = 5;
+    inputField.max = 30;
+    inputField.setAttribute('id', 'sampling_rate_input');
+    inputField.style.width = "10%";
+    inputField.style.margin = "0 10px 0 10px";
+
+    var smload = document.createElement("div");
+    smload.id = "downloadCSVid";
+    smload.style.display = 'inline-block';
+    smload.style.marginLeft = '15px';
+    var tip = document.createElement("a");
+    tip.id = "downloadCSVstatus";
+    tip.classList.add("tooltiptext");
+    smload.append(tip);
+
+    var popupFooter = document.createElement('div');
+    popupFooter.classList.add('popup-footer');
+    var span = document.createElement('span');
+
+    var closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.classList.add('popupbuttons');
+    closeButton.onclick = function () {
+        document.body.removeChild(popupmain);
+    };
+    popupMessage.appendChild(inputField);
+    popupMessage.append(smload);
+    var downloadbtn = document.createElement('button');
+    downloadbtn.textContent = 'Download';
+    downloadbtn.style.marginRight = "10px";
+    downloadbtn.classList.add('popupbuttons');
+    downloadbtn.onclick = function () {
+        document.getElementById("downloadCSVstatus").innerHTML = "";
+        document.getElementById("downloadCSVid").className = "";
+        document.getElementById("downloadCSVid").style.border = "3px dotted black";
+        document.getElementById("downloadCSVid").classList.add("ministatusloading");
+        var samplingRate = document.getElementById('sampling_rate_input').value;
+        console.log('Selected sampling rate:', samplingRate);
+        var originalText = downloadbtn.innerHTML;
+        downloadbtn.innerHTML = "Please wait..";
+        downloadbtn.disabled = true;
+        closeButton.disabled = true;
+        $.ajax({
+            url: "/exportcsv",
+            method: "GET",
+            data: { sampling_rate: samplingRate },
+            contentType: "json",
+            success: function (res) {
+                document.getElementById("downloadCSVid").className = "";
+                if (res.status === 'error') {
+                    document.getElementById("downloadCSVid").classList.add("tooltip");
+                    document.getElementById("downloadCSVstatus").innerHTML = res.data;
+                    document.getElementById("downloadCSVid").classList.add("ministatusfail");
+                } else {
+                    document.getElementById("downloadCSVid").classList.add("tooltip");
+                    document.getElementById("downloadCSVstatus").innerHTML = "Success";
+                    document.getElementById("downloadCSVid").classList.add("ministatussuccess");
+                    var link = document.createElement('a');
+                    link.href = res.data;
+                    link.click();
+                    downloadbtn.innerHTML = originalText;
+                    downloadbtn.disabled = false;
+                    closeButton.disabled = false;
+                    document.body.removeChild(popupmain);
+                    alert("CSV File exported successfully");
+
+                }
+            },
+            error: function () {
+                document.getElementById("downloadCSVid").className = "";
+                document.getElementById("downloadCSVid").classList.add("ministatusfail");
+                document.getElementById("downloadCSVid").classList.add("tooltip");
+                document.getElementById("downloadCSVstatus").innerHTML = "Network Error";
+                console.log("Failed to export CSV.");
+                downloadbtn.innerHTML = originalText;
+                downloadbtn.disabled = false;
+                closeButton.disabled = false;
+                alert("Failed to export CSV File");
+            }
+        });
+    };
+
+
+    span.appendChild(closeButton);
+    span.appendChild(downloadbtn);
+    popupFooter.appendChild(span);
+    popupmain.appendChild(popup);
+    popup.appendChild(popupHeader);
+    popup.appendChild(popupMessage);
+    popup.appendChild(popupFooter);
+
+    document.body.appendChild(popupmain);
 }
 function cmdBtnonclick(e){
     var eles = $(e.target).parent().siblings();
@@ -1672,7 +1768,6 @@ function generatePDIblock(){
         dataType: 'json',
         data:{"sc_cmd":"loadPDI", "target": $('#PDIselectionOption1').val().split("\t")[0], "params":""},
         success: function (res){
-        console.log("chinna",res)
             document.getElementById("loadpdiloadid").className = "";
                 if (res.status === 'error'){
 			document.getElementById("loadpdiloadid").classList.add("tooltip");

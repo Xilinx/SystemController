@@ -444,14 +444,17 @@ class InstallBoard(Resource):
 class exportCSV(Resource):
     def get(self, ):
         try:
-            result = Term.exec_cmd("python3"+app_config["csvFIlePath"])
-            print(result)
-            resp_jon = {
+            sampling_rate = request.args.get('sampling_rate', 5)
+            output_dir = "./static/tmp/"
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            cmd = f"{app_config['csvFIlePath']} -d {sampling_rate}"
+            result = Term.exec_cmd(f"python3 {cmd}")
+            resp_json = {
                 "status":"success"
                 ,"data": result.strip().split(" - ")[-1]
             }
-            print(resp_jon.data)
-            return resp_jon
+            return resp_json
         except Exception as e:
             resp_json = {
                 "status":"error"

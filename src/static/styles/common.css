@@ -59,6 +59,10 @@
   animation: spin 2s linear infinite;
 }
 
+#downloadCSVid.ministatusloading{
+   border: 3px dotted black;
+   margin-bottom: -5px;
+}
 .ministatussuccess:before{
     content:' \2714';
   color:lightgreen;
@@ -1231,7 +1235,7 @@ color: white;
 .tooltip {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted black;
+  /* border-bottom: 1px dotted black; */
 }
 
 .tooltip .tooltiptext {
