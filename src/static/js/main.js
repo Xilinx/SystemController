@@ -2256,6 +2256,9 @@ $(document).ready(function () {
 	Banner();
 	loadRefreshData();
 	upload_clock_files();
+        if(!listsjson_sc.listfeature.includes("listBIT")){
+        	$("#boardinterfacetest").remove();
+    	}
 
 });
 
