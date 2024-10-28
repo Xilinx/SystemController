@@ -1961,14 +1961,14 @@ function layoutDesigns(){
         $("#help_screen").append(em3);
    }
 /*	About Screen */
-   {
+{
         $('#about_screen .app-title').html(app_strings.about_content.title);
         var em3 = document.createElement("div");
         for(var i = 0; i < app_strings.about_content.content.length; i++){
-        if (app_strings.help_content.content[i].heading.length){
+        if (app_strings.about_content.content[i].heading.length){
 	        var em5 = document.createElement("p");
         	em5.classList.add("subheadings");
-	        em5.textContent = "\n"+app_strings.help_content.content[i].heading + "\n";
+	        em5.textContent = "\n"+app_strings.about_content.content[i].heading + "\n";
         	em3.append(em5)
         }
         if(app_strings.about_content.content[i].content_type == 1){
@@ -1983,19 +1983,23 @@ function layoutDesigns(){
 		em7.textContent = app_strings.about_content.content[i].content[j];
 		}
 		em4.append(em7)
-                em3.append(em4);
+        em3.append(em4);
         }}else{
         for(var j = 0; j < app_strings.about_content.content[i].content.length; j++){
 		var em5 = document.createElement("p");
 		em5.classList.add("descontent");
 		em5.textContent = app_strings.about_content.content[i].content[j] + "\n";
-		em3.append(em5)
+		em3.append(em5);
         }
         }
         }
         $("#about_screen").append(em3);
         var em6 = document.createElement("div");
         em6.style.marginTop = "10px";
+        var em8 = document.createElement("p");
+        em8.classList.add("subheadings");
+        em8.textContent = "\nVersion Information:"
+        em6.append(em8);
         var em7 = document.createElement("p");
         em7.classList.add("descontent");
         em7.style.fontFamily = "monospace";
