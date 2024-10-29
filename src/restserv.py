@@ -192,14 +192,15 @@ class ClockFilesList(Resource):
             }
             print('e',e)
             return resp_json,500
+
 class MultiCmdQuery(Resource):
     def get(self,):
         try:
-            if checkJNK() >= 1: 
-                resp_json = { 
+            if checkJNK() >= 1:
+                resp_json = {
                     "status":"error"
                     ,"data": "Notebook kernel is running. Please stop running kernel."
-                }                       
+                }
                 return resp_json,200
 
             reqa = request.args.get('sc_cmd')
@@ -209,13 +210,15 @@ class MultiCmdQuery(Resource):
             params_req = request.args.get('params')
             eparams = json.loads(params_req)
             result = {}
+            isFail = False
+            isSuccess = False
             for i,a in enumerate(ereq):
-                
+
                 req = ereq[i]
                 tar = etar[i]
                 params = eparams[i].split(",")
                 paramStr = eparams[i].replace(","," ")
-                
+
                 try:
                     cmd_gen = sc_app_path+" -c " + req
                     if len(tar):
@@ -226,23 +229,41 @@ class MultiCmdQuery(Resource):
                 except Exception as d:
                     print(d)
                 if response.startswith("ERROR:") or "ERROR:" in response:
-                    result = response
-                else : 
+                    if "error" not in result.keys():
+                        result["error"] = ""
+                    result["error"] = result["error"] + response
+                    isFail = True
+
+                else :
                     result1 = parse.parse_cmd_resp(response, req, tar, params);
                     result.update(result1)
-            resp_json = {
-                "status":"success"
-                ,"data":result
-            }
-            
-            return resp_json,200
+                    isSuccess = True
+
+
+            if  isFail and isSuccess:
+                resp_json = {
+                    "status": "partial_success"
+                    , "data": result
+                }
+                return resp_json,200
+            elif isSuccess and not isFail:
+                resp_json = {
+                    "status": "success"
+                    , "data": result
+                }
+                return resp_json,200
+            else:
+                resp_json = {
+                    "status": "error"
+                    , "data": result["error"]
+                }
+                return resp_json, 200
         except Exception as e:
             resp_json = {
                 "status":"error"
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
-
 
 class CmdQuery(Resource):
     def get(self,):

@@ -77,7 +77,13 @@
   padding:0 8px 0 0px;
   font-weight: bold;
   }
-
+ .ministatuspartial:before{
+  content:' \26A0';
+  color:yellow;
+  font-size: 12px;
+  padding:0 8px 0 0px;
+  font-weight: bold;
+  }
 #root {
   display: none;
   text-align: center;

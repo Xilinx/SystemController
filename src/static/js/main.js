@@ -754,6 +754,13 @@ function cmdBtnonclick(e){
                                 cn.classList.add("ministatusfail");
                                 cn.classList.add("tooltip");
 			    }
+ 	                    
+			    else if (res.status == "partial_success"){
+                                cn.childNodes[0].innerHTML = res.data.error+restime();
+                                cn.className = '';
+                                cn.classList.add("ministatuspartial");
+                                cn.classList.add("tooltip");
+			    }			
                             else{
                                 cn.childNodes[0].innerHTML = "Success"+restime();
                                 cn.className = '';
