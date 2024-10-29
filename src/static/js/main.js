@@ -1657,7 +1657,7 @@ function generatePDIblock(){
     button.id="uploadpdi";
     button.setAttribute("value", "Browse");
     button.setAttribute("type", "file");
-    button.setAttribute('accept', '.pdi');
+//    button.setAttribute('accept', '.pdi');
     button.addEventListener('change', function(event) {
     var file = event.target.files[0];
     if (file) {
