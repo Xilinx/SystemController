@@ -292,9 +292,10 @@ class CmdQuery(Resource):
             except Exception as d:
                 print(d)
             if response.startswith("ERROR:") or "ERROR:" in response:
+                dresp = {"message":response}
                 resp_json = {
                     "status":"error"
-                    ,"data":response
+                    ,"data":dresp
                 }
             else : 
                 result = parse.parse_cmd_resp(response, req, tar, params);
@@ -302,12 +303,12 @@ class CmdQuery(Resource):
                     "status":"success"
                     ,"data":result
                 }
-                if req.startswith("BIT") or "BIT" in req:
-                    bitLog=SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
-                    if bitLog.startswith("cat: can't open") or "cat: can't open" in bitLog:
-                        resp_json["data"]["bitlogs"] = ""
-                    else:
-                        resp_json["data"]["bitlogs"] = bitLog
+            if req.startswith("BIT") or "BIT" in req:
+                bitLog=SysFactory.exec_cmd("cat "+app_config["bitlogFilePath"],SysFactory.TERMINAL)
+                if bitLog.startswith("cat: can't open") or "cat: can't open" in bitLog:
+                    resp_json["data"]["bitlogs"] = ""
+                else:
+                    resp_json["data"]["bitlogs"] = bitLog
             return resp_json,200
         except Exception as e:
             resp_json = {
