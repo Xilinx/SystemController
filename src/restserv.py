@@ -504,3 +504,42 @@ class exportCSV(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
+class RaucUpdate(Resource):
+    def get(self, ):
+        try:
+            cmd = "rauc status"
+            req = request.args.get('func')
+            if req == "status":
+                result = Term.exec_cmd(cmd+ " --detailed").split('\n')
+                resp_json = {
+                    "status": "success"
+                    , "data": result
+                }
+                return resp_json
+            if req == "active_booted":
+                result = Term.exec_cmd(cmd+" mark-active booted")
+                resp_json = {
+                    "status": "success"
+                    , "data": result
+                }
+                return resp_json
+            if req == "active_other":
+                result = Term.exec_cmd(cmd+" mark-active other")
+                resp_json = {
+                    "status": "success"
+                    , "data": result
+                }
+                return resp_json
+            if req == "install":
+                result = Term.exec_cmd("rauc install")
+                resp_json = {
+                    "status": "success"
+                    , "data": result
+                }
+                return resp_json
+        except Exception as e:
+            resp_json = {
+                "status": "error"
+                , "data": {"error": "%s" % e}
+            }
+            return resp_json, 500

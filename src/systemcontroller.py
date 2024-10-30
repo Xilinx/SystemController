@@ -56,6 +56,7 @@ api.add_resource(Banner,"/notif")
 api.add_resource(ScriptRunner, "/scriptrunner")
 api.add_resource(InstallBoard, "/installboard")
 api.add_resource(exportCSV, "/exportcsv")
+api.add_resource(RaucUpdate, "/raucupdate")
 ## Resources
 import threading
 req_lock = threading.Lock()

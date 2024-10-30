@@ -1302,6 +1302,46 @@ color: white;
 .tooltipinfo:hover .tooltiptextinfo {
   visibility: visible;
 }
+/*rauc update*/
+.file-name {
+    color: white;
+    display: block;
+    margin: 20px;
+    padding: 2px;
+    border: 1px solid;
+    width: 30%;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-radius: 5px;
+}
+.file-upload {
+    width: 15%;
+    align-content: center;
+    display: block;
+    text-align: center;
+    color: black;
+    background: white;
+    margin: 20px;
+    float: left;
+    padding: 2px;
+    border-radius: 5px;
+    position: relative;
+    left: 15px;
+    cursor: pointer;
+}
+.rauc_content {
+    padding: 20px;
+    margin:20px;
+}
+.radiobuttons{
+    color: white;
+    margin-top: 10px;
+    position: absolute;
+    left: 5%;
+    font-size: large;
+}
 #versionLabel{
     float: right;
     /*margin-top: 20px;*/

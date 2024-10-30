@@ -121,7 +121,7 @@ function launchpmtool(){
 
 }
 function hideAllPages(){
-    $("#home_screen_com, #home_screen_db, #help_screen, #about_screen, #dnd_screen, #boardseettings_screen, #tools_screen, #testandebug_screen, #linuxprompt_screen, #ttbbackid").addClass('hide');
+    $("#home_screen_com, #home_screen_db, #help_screen, #about_screen, #dnd_screen, #boardseettings_screen, #tools_screen, #testandebug_screen, #linuxprompt_screen,#raucupdate_screen, #ttbbackid").addClass('hide');
 }
 
 function renderComponentDiv(name, comps,heads){
@@ -1521,6 +1521,153 @@ function generateBITUI() {
     });
 
 }
+function generateRAUCblock() {
+    function createSection(title) {
+        var section = document.createElement("div");
+        section.style.width = '50%';
+
+        var header = document.createElement("h2");
+        header.textContent = title;
+        header.style.borderBottom = '1px solid white';
+        header.className = 'subheadings';
+
+        section.appendChild(header);
+        return section;
+    }
+
+    var container = document.createElement("div");
+
+    var BootStatus = createSection("Current Bootable Status:");
+    BootStatus.className = 'rauc_content';
+    var status = document.createElement("p");
+    status.className = 'descontent';
+    status.id = "status-output";
+
+    $.ajax({
+        url:"/raucupdate",
+        type:"GET",
+        dataType:"json",
+        data:{"func":"status"},
+        success: function(res) {
+            if (res.data) {
+                document.getElementById("status-output").textContent = res.data.join("\n");
+            } else if (res.error) {
+                document.getElementById("status-output").textContent = "Error: " + res.error;
+            }
+        },
+        error: function() {
+            document.getElementById("status-output").textContent = "Error fetching RAUC status.";
+        }
+     });
+    BootStatus.appendChild(status);
+    container.appendChild(BootStatus);
+
+    var SwitchPartition = createSection("Switch Partition:");
+    SwitchPartition.className = 'rauc_content';
+    container.appendChild(SwitchPartition);
+
+    function createRadioButton(id, name, value, labelText, changeHandler) {
+        var radioInput = document.createElement('input');
+        radioInput.type = 'radio';
+        radioInput.id = id;
+        radioInput.name = name;
+        radioInput.value = value;
+        radioInput.addEventListener('change', changeHandler);
+
+        var label = document.createElement('label');
+        label.htmlFor = id;
+        label.appendChild(document.createTextNode(labelText));
+
+        var lineBreak = document.createElement('br');
+
+        return { radioInput, label, lineBreak };
+    }
+
+    function RadioButtonCreation(ajaxData) {
+        return function() {
+            if (this.checked) {
+                $.ajax({
+                    url: "/raucupdate",
+                    type: "GET",
+                    dataType: "json",
+                    data: { "func": ajaxData },
+                    success: function(res) {
+                        if (res.data) {
+                            alert(res.data);
+                        }
+                    },
+                    error: function() {
+                        alert("not booted");
+                    }
+                });
+            }
+        };
+    }
+
+    var radioBtns = document.createElement('div');
+    radioBtns.className = 'radiobuttons';
+
+    var imgAConfig = createRadioButton('imageA', 'switch-partition', 'image A', 'Image A', RadioButtonCreation('active_booted'));
+    var imgBConfig = createRadioButton('imageB', 'switch-partition', 'image B', 'Image B', RadioButtonCreation('active_other'));
+
+    radioBtns.appendChild(imgAConfig.radioInput);
+    radioBtns.appendChild(imgAConfig.label);
+    radioBtns.appendChild(imgAConfig.lineBreak);
+    radioBtns.appendChild(imgBConfig.radioInput);
+    radioBtns.appendChild(imgBConfig.label);
+
+    SwitchPartition.appendChild(radioBtns);
+
+    var uploadFlashSection = createSection("Upload and Flash Partition:");
+    uploadFlashSection.className = 'rauc_content';
+    container.appendChild(uploadFlashSection);
+
+    var labelFileInput = document.createElement('label');
+    labelFileInput.setAttribute('for', 'file-input');
+    labelFileInput.className = 'file-upload';
+    labelFileInput.textContent = 'Browse';
+
+    var fileNameDisplay = document.createElement('span');
+    fileNameDisplay.textContent = 'No file chosen';
+    fileNameDisplay.classList.add('file-name');
+    fileNameDisplay.id = 'file-name';
+
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = 'file-input';
+    fileInput.className = 'file-input';
+    fileInput.style.display = 'none';
+    fileInput.addEventListener('change', function() {
+            var fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
+            fileNameDisplay.textContent = fileName;
+    });
+    var uploadBtn = document.createElement("button");
+    uploadBtn.className = "file-upload";
+    uploadBtn.textContent = 'Upload';
+    uploadBtn.onclick = function (){
+        $.ajax({
+        url:"/raucupdate",
+        type:"GET",
+        dataType:"json",
+        data:{"func":"install"},
+        success: function(res) {
+            if (res.data) {
+
+            }
+        },
+        error: function() {
+
+        }
+     });
+    };
+
+    uploadFlashSection.appendChild(labelFileInput);
+    uploadFlashSection.appendChild(fileInput);
+    uploadFlashSection.appendChild(fileNameDisplay);
+    uploadFlashSection.appendChild(uploadBtn);
+
+    $("#rauc_update_screen").append(container);
+}
 function generateBootModeblock(){
     var block = $("#detectBootModeID");
     var em1 = document.createElement("p");
@@ -1894,6 +2041,7 @@ function navClick(tid){
     if (tid === "testtheboard") {$("#home_screen_db").removeClass('hide');}
     if (tid === "boardsettings") {$("#boardseettings_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
     if (tid === "boardinterfacetest") {$("#testandebug_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
+    if (tid === "raucupdate") {$("#raucupdate_screen").removeClass('hide'); $("#ttbbackid").removeClass('hide');}
 //    if (tid === "demosdesigns") {$("#dnd_screen").removeClass('hide');}
     if (tid === "cockpit") {launchacap()}
     if (tid === "pmdashboard") {launchpmtool()}    
@@ -2261,6 +2409,7 @@ $(document).ready(function () {
     generateBoardSettingsUI();
     generateBITUI();
     generateBootModeblock();
+    generateRAUCblock();
     generatePDIblock();
     $('.app-title:empty').hide();
       $('#top_menu li').click(function (e) {
