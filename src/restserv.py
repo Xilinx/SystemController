@@ -231,16 +231,17 @@ class MultiCmdQuery(Resource):
                 if response.startswith("ERROR:") or "ERROR:" in response:
                     if "error" not in result.keys():
                         result["error"] = ""
-                    result["error"] = result["error"] + response
+                    result["error"] += req.capitalize() + " : " + response + "<br>"
                     isFail = True
 
                 else :
                     result1 = parse.parse_cmd_resp(response, req, tar, params);
                     result.update(result1)
                     isSuccess = True
-
-
-            if  isFail and isSuccess:
+                    if "error" not in result.keys():
+                        result["error"] = ""
+                    result["error"] += req.capitalize() + " : Success <br>\n"
+            if isFail and isSuccess:
                 resp_json = {
                     "status": "partial_success"
                     , "data": result
@@ -264,7 +265,6 @@ class MultiCmdQuery(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
-
 class CmdQuery(Resource):
     def get(self,):
         try:

@@ -385,7 +385,7 @@ function addClockTab(){
     var headcompsget = {
             "headcomponents":["C,L0,L1,L2,B0"]
             ,"L0": "Clock Name"
-            , "L1" : "Frequency"
+            , "L1" : "Configured Frequency"
             , "L2" : "Measured Frequency"
             , "B0" : "Get All"
     };
