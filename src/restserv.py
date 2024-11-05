@@ -139,52 +139,68 @@ class EEPROMDetails(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
+
 class ClockFilesList(Resource):
     def get(self,):
         try:
-            tcs_files = []
-            txt_files = []
-            bin_files = []
-            for c in os.listdir(app_config["8A34001_clk_files_path"]):
-                if c.endswith(".tcs"):
-                    tcs_files.append(os.path.splitext(c)[0])
-                if c.endswith(".txt"):
-                    txt_files.append(os.path.splitext(c)[0])
-                if c.endswith(".bin"):
-                    bin_files.append(os.path.splitext(c)[0])
-            final_list = list(set(tcs_files+txt_files))
-            bin_files = list(set(bin_files))
-            upload_tcs_files = []
-            upload_txt_files = []
-            upload_bin_files = []
-            if (os.path.exists(app_config["uploaded_files_path"])):
-                for c in os.listdir(app_config["uploaded_files_path"]):
+            req = request.args.get('func')
+            if req == "clock":
+                tcs_files = []
+                txt_files = []
+                bin_files = []
+                for c in os.listdir(app_config["8A34001_clk_files_path"]):
                     if c.endswith(".tcs"):
-                        upload_tcs_files.append(os.path.splitext(c)[0])
+                        tcs_files.append(os.path.splitext(c)[0])
                     if c.endswith(".txt"):
-                        upload_txt_files.append(os.path.splitext(c)[0])
+                        txt_files.append(os.path.splitext(c)[0])
                     if c.endswith(".bin"):
-                        upload_bin_files.append(os.path.splitext(c)[0])
-            final_upload_list = list(set(upload_txt_files+upload_tcs_files))
-            upload_bin_files = list(set(upload_bin_files))
-            pdifiles = os.listdir(app_config["PDIFilePath"]+app_config["deviname"]) if os.path.exists(app_config["PDIFilePath"]+app_config["deviname"]) else []
-            resp_json = {
-                "status": "success"
-                , "data": {
-                    "default":  {
-                        "finallist": final_list
-                        , "binfiles": bin_files
-                    }
-                    , "user":  {
-                        "finaluploadlist": final_upload_list
-                        , "binfiles": upload_bin_files
-                    }
-                    , "pdi": {
-                        "pdi_files":pdifiles
+                        bin_files.append(os.path.splitext(c)[0])
+                final_list = list(set(tcs_files+txt_files))
+                bin_files = list(set(bin_files))
+                upload_tcs_files = []
+                upload_txt_files = []
+                upload_bin_files = []
+                if (os.path.exists(app_config["uploaded_files_path"])):
+                    for c in os.listdir(app_config["uploaded_files_path"]):
+                        if c.endswith(".tcs"):
+                            upload_tcs_files.append(os.path.splitext(c)[0])
+                        if c.endswith(".txt"):
+                            upload_txt_files.append(os.path.splitext(c)[0])
+                        if c.endswith(".bin"):
+                            upload_bin_files.append(os.path.splitext(c)[0])
+                final_upload_list = list(set(upload_txt_files+upload_tcs_files))
+                upload_bin_files = list(set(upload_bin_files))
+                resp_json = {
+                    "status": "success"
+                    , "data": {
+                        "default": {
+                            "finallist": final_list
+                            , "binfiles": bin_files
+                        }
+                        , "user": {
+                            "finaluploadlist": final_upload_list
+                            , "binfiles": upload_bin_files
+                        }
                     }
                 }
-            }
-            return resp_json,200
+                return resp_json, 200
+            elif req == "pdi":
+                pdifiles = os.listdir(app_config["PDIFilePath"]+app_config["deviname"]) if os.path.exists(app_config["PDIFilePath"]+app_config["deviname"]) else []
+                resp_json = {
+                    "status": "success"
+                    , "data": {
+                        "pdi": {
+                            "pdi_files": pdifiles
+                        }
+                    }
+                }
+                return resp_json,200
+            else:
+                resp_json = {
+                    "status": "error",
+                    "data": {"error": "Invalid function requested"}
+                }
+                return resp_json, 400
         except Exception as e:
             resp_json = {
                 "status":"error"
@@ -192,7 +208,6 @@ class ClockFilesList(Resource):
             }
             print('e',e)
             return resp_json,500
-
 class MultiCmdQuery(Resource):
     def get(self,):
         try:

@@ -388,58 +388,62 @@ function startPolling() {
     }
   });
   startPolling();
-function upload_clock_files() {
+function upload_clock_files(funcType) {
     $.ajax({
         url: "/clock_files",
         type: 'GET',
         dataType: 'json',
+        data: { "func": funcType },
         success: function (res) {
-            document.querySelectorAll('#selectElementId1').forEach((em, i) => {
-                while (em.length > 0) em.remove(em.length - 1);
-                jQuery.each(res["data"]["default"]["finallist"], function (k, d) {
-                    var g = document.createElement("option");
-                    g.setAttribute('value', d);
-                    g.innerHTML = d
-                    em.children[0].appendChild(g);
+            if (funcType === "clock"){
+                document.querySelectorAll('#selectElementId1').forEach((em, i) => {
+                    while (em.length > 0) em.remove(em.length - 1);
+                    jQuery.each(res["data"]["default"]["finallist"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.children[0].appendChild(g);
+                    });
+                    jQuery.each(res["data"]["user"]["finaluploadlist"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.children[1].appendChild(g);
+                    });
                 });
-                jQuery.each(res["data"]["user"]["finaluploadlist"], function (k, d) {
-                    var g = document.createElement("option");
-                    g.setAttribute('value', d);
-                    g.innerHTML = d
-                    em.children[1].appendChild(g);
+                document.querySelectorAll('#selectElementId0').forEach((em, i) => {
+                    while (em.length > 0) em.remove(em.length - 1);
+                    jQuery.each(res["data"]["default"]["binfiles"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.children[0].appendChild(g);
+                    });
+                    jQuery.each(res["data"]["user"]["binfiles"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.children[1].appendChild(g);
+                    });
                 });
-            });
-            document.querySelectorAll('#selectElementId0').forEach((em, i) => {
-                while (em.length > 0) em.remove(em.length - 1);
-                jQuery.each(res["data"]["default"]["binfiles"], function (k, d) {
-                    var g = document.createElement("option");
-                    g.setAttribute('value', d);
-                    g.innerHTML = d
-                    em.children[0].appendChild(g);
+            }else if (funcType === "pdi"){
+                document.querySelectorAll('#PDIselectionOption1 , #PDIselectionOption2').forEach((em, i) => {
+                    while (em.length > 0) em.remove(em.length - 1);
+                    jQuery.each(res["data"]["pdi"]["pdi_files"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.appendChild(g);
+                    });
                 });
-                jQuery.each(res["data"]["user"]["binfiles"], function (k, d) {
-                    var g = document.createElement("option");
-                    g.setAttribute('value', d);
-                    g.innerHTML = d
-                    em.children[1].appendChild(g);
-                });
-            });
-            document.querySelectorAll('#PDIselectionOption1 , #PDIselectionOption2').forEach((em, i) => {
-                while (em.length > 0) em.remove(em.length - 1);
-                jQuery.each(res["data"]["pdi"]["pdi_files"], function (k, d) {
-                    var g = document.createElement("option");
-                    g.setAttribute('value', d);
-                    g.innerHTML = d
-                    em.appendChild(g);
-                });
-            });
+            }
         },
         error: function (res) {
             console.log(res)
         }
     });
 }
-function fileUploder(formdata, fileObj, select_id) {
+function fileUploder(formdata, fileObj, select_id,funcType) {
     if (fileObj.size == 0) {
           alert("Cannot upload an empty file");
           return;
@@ -461,29 +465,46 @@ function fileUploder(formdata, fileObj, select_id) {
         return;
 
     }
-        fetch('/uploader', {
+        fetch('/uploader?func=' + funcType, {
             method: 'POST', // or 'PUT'
             body: formdata,
         })
             .then(data => {
                 if (data.status == 200) {
                     console.log('File uploaded:');
-                    $.ajax({
+                    if (funcType === "clock") {
+                        $.ajax({
                         url: "/clock_files",
                         type: 'GET',
-                        data: {},
+                        data: {'func':'clock'},
                         timeout: 5000,
                         dataType: 'json',
                         success: function (res) {
-                            upload_clock_files();
+                            upload_clock_files('clock');
                             count = true
                         },
                         error: function (res) {
                             console.log(res)
                         }
                     });
-                }
-                else if (data.status == 500) {
+                    } else if (funcType === "pdi") {
+                        $.ajax({
+                        url: "/clock_files",
+                        type: 'GET',
+                        data: {'func':'pdi'},
+                        timeout: 5000,
+                        dataType: 'json',
+                        success: function (res) {
+                            upload_clock_files('pdi');
+                            count = true
+                        },
+                        error: function (res) {
+                            console.log(res)
+                        }
+                    });
+                    }
+
+                }else if (data.status == 500) {
                     console.log(data)
                 }
             })
@@ -830,7 +851,7 @@ function rendertabComponentDiv(title, comp){
                     var formData = new FormData();
                         for (let i = 0; i < e.target.files.length; i++) {
                             formData.append('file', e.target.files[i]);
-                            fileUploder(formData, e.target.files[i], e.target.files[i].name.split('.')[1] == 'txt' ? '1' : '0');
+                            fileUploder(formData, e.target.files[i], e.target.files[i].name.split('.')[1] == 'txt' ? '1' : '0',"clock");
                         }
                         e.target.value = "";
                     })
@@ -1670,8 +1691,8 @@ function generatePDIblock(){
     if (file) {
         var formData = new FormData();
         formData.append("file", file);
-        fileUploder(formData, file, "PDIselectionOption1");
-        fileUploder(formData, file, "PDIselectionOption2");
+        fileUploder(formData, file, "PDIselectionOption1", "pdi");
+        fileUploder(formData, file, "PDIselectionOption2", "pdi");
     }
 });
     em1.appendChild(button);
@@ -2266,7 +2287,8 @@ $(document).ready(function () {
 	filleepromdetails();
 	Banner();
 	loadRefreshData();
-	upload_clock_files();
+	upload_clock_files("pdi");
+	upload_clock_files("clock");
         if(!listsjson_sc.listfeature.includes("listBIT")){
         	$("#boardinterfacetest").remove();
     	}

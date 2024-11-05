@@ -31,12 +31,12 @@ app.config['PDI_UPLOAD_FOLDER'] = app_config["PDIFilePath"]
 app.config['UPLOAD_FOLDER'] = app_config["uploaded_files_path"]
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_CLK_EXTENSIONS = set(app_config["allowed_clock_files"])
-ALLOWED_PDI_EXTENSIONS = set(app_config["allowed_pdi_files"])
+#ALLOWED_PDI_EXTENSIONS = set(app_config["allowed_pdi_files"])
 
 def allowed_clk_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_CLK_EXTENSIONS
 def allowed_pdi_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_PDI_EXTENSIONS
+    return True
 
 @app.route('/')
 def index():
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     generate_gen_sc_file(sc_app_path, app_config)
     @app.route('/uploader', methods=['POST'])
     def upload_file():
-        # Check if the post request has the file part
+        req = request.args.get('func')
         if 'file' not in request.files:
             return jsonify({'message': 'No file part in the request'})
 
@@ -247,10 +247,10 @@ if __name__ == '__main__':
             if file.filename == '':
                 return jsonify({'message': 'No file selected for uploading'})
 
-            if file and allowed_clk_file(file.filename):
+            if req == 'clock' and file and allowed_clk_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            elif file and allowed_pdi_file(file.filename):
+            elif req == 'pdi' and file and allowed_pdi_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['PDI_UPLOAD_FOLDER']+app_config["deviname"], filename))
             else:
