@@ -243,10 +243,16 @@ class MultiCmdQuery(Resource):
                     response = Term.exec_cmd(cmd_gen)
                 except Exception as d:
                     print(d)
+                if req == "getclock":
+                    req_display = "<b>Configured Frequency</b>"
+                elif req == "getmeasuredclock":
+                    req_display = "<b>Measured Frequency</b>"
+                else:
+                    req_display = "<b>" + req.capitalize() + "</b>"
                 if response.startswith("ERROR:") or "ERROR:" in response:
                     if "error" not in result.keys():
                         result["error"] = ""
-                    result["error"] += req.capitalize() + " : " + response + "<br>"
+                    result["error"] += req_display + " : " + response + "<br>"
                     isFail = True
 
                 else :
@@ -255,7 +261,7 @@ class MultiCmdQuery(Resource):
                     isSuccess = True
                     if "error" not in result.keys():
                         result["error"] = ""
-                    result["error"] += req.capitalize() + " : Success <br>\n"
+                    result["error"] += req_display + " : Success \n<br>"
             if isFail and isSuccess:
                 resp_json = {
                     "status": "partial_success"
