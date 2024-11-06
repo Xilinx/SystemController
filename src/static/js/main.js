@@ -621,27 +621,30 @@ function exportCSV() {
             contentType: "json",
             success: function (res) {
                 document.getElementById("downloadCSVid").className = "";
-                if (res.status === 'error') {
+                if (res.status === 'error' || !(res.data && res.data.endsWith(".csv"))) {
                     document.getElementById("downloadCSVid").classList.add("tooltip");
-                    document.getElementById("downloadCSVstatus").innerHTML = res.data;
+                    document.getElementById("downloadCSVid").style.border = "3px dotted white";
+                    document.getElementById("downloadCSVstatus").innerHTML = "Network Error";
                     document.getElementById("downloadCSVid").classList.add("ministatusfail");
+                    alert("Failed to export CSV File");
                 } else {
                     document.getElementById("downloadCSVid").classList.add("tooltip");
                     document.getElementById("downloadCSVstatus").innerHTML = "Success";
                     document.getElementById("downloadCSVid").classList.add("ministatussuccess");
+
                     var link = document.createElement('a');
                     link.href = res.data;
                     link.click();
-                    downloadbtn.innerHTML = originalText;
-                    downloadbtn.disabled = false;
-                    closeButton.disabled = false;
                     document.body.removeChild(popupmain);
                     alert("CSV File exported successfully");
-
                 }
+                downloadbtn.innerHTML = originalText;
+                downloadbtn.disabled = false;
+                closeButton.disabled = false;
             },
             error: function () {
                 document.getElementById("downloadCSVid").className = "";
+                document.getElementById("downloadCSVid").style.border = "3px dotted white";
                 document.getElementById("downloadCSVid").classList.add("ministatusfail");
                 document.getElementById("downloadCSVid").classList.add("tooltip");
                 document.getElementById("downloadCSVstatus").innerHTML = "Network Error";
@@ -651,6 +654,7 @@ function exportCSV() {
                 closeButton.disabled = false;
                 alert("Failed to export CSV File");
             }
+
         });
     };
 
