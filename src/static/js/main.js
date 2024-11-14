@@ -436,6 +436,15 @@ function upload_clock_files(funcType) {
                         em.appendChild(g);
                     });
                 });
+            }else if (funcType === "rauc"){
+                document.querySelectorAll('#rauc_file_name').forEach((em, i) => {
+                    while (em.length > 0) em.remove(em.length - 1);
+                    jQuery.each(res["data"]["rauc"]["rauc_files"], function (k, d) {
+                        var g =  document.getElementById("file-input");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                    });
+                });
             }
         },
         error: function (res) {
@@ -443,13 +452,13 @@ function upload_clock_files(funcType) {
         }
     });
 }
-function fileUploder(formdata, fileObj, select_id,funcType) {
+function fileUploder(formdata, fileObj, select_id, funcType) {
     if (fileObj.size == 0) {
-          alert("Cannot upload an empty file");
-          return;
-          }
+        alert("Cannot upload an empty file");
+        return;
+    }
     var dupFound = false;
-    var sIds = ["selectElementId0", "selectElementId1","PDIselectionOption1","PDIselectionOption2"]
+    var sIds = ["selectElementId0", "selectElementId1", "PDIselectionOption1", "PDIselectionOption2", "rauc_file_name"]
     jQuery.each(sIds, function (t, l) {
 
         document.querySelectorAll('#' + l).forEach((em, i) => {
@@ -465,52 +474,24 @@ function fileUploder(formdata, fileObj, select_id,funcType) {
         return;
 
     }
-        fetch('/uploader?func=' + funcType, {
-            method: 'POST', // or 'PUT'
-            body: formdata,
-        })
-            .then(data => {
-                if (data.status == 200) {
-                    console.log('File uploaded:');
-                    if (funcType === "clock") {
-                        $.ajax({
-                        url: "/clock_files",
-                        type: 'GET',
-                        data: {'func':'clock'},
-                        timeout: 5000,
-                        dataType: 'json',
-                        success: function (res) {
-                            upload_clock_files('clock');
-                            count = true
-                        },
-                        error: function (res) {
-                            console.log(res)
-                        }
-                    });
-                    } else if (funcType === "pdi") {
-                        $.ajax({
-                        url: "/clock_files",
-                        type: 'GET',
-                        data: {'func':'pdi'},
-                        timeout: 5000,
-                        dataType: 'json',
-                        success: function (res) {
-                            upload_clock_files('pdi');
-                            count = true
-                        },
-                        error: function (res) {
-                            console.log(res)
-                        }
-                    });
-                    }
-
-                }else if (data.status == 500) {
-                    console.log(data)
+    return fetch('/uploader?func=' + funcType, {
+        method: 'POST', // or 'PUT'
+        body: formdata,
+    })
+        .then(response => {
+            if (response.status == 200) {
+                console.log('File uploaded successfully.');
+                if (["clock", "pdi", "rauc"].includes(funcType)) {
+                    upload_clock_files(funcType);
                 }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+                return "Success";
+            } else {
+                console.error("Upload failed with status:", response.status);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 function getlogs(){
     $.ajax({
@@ -1521,6 +1502,7 @@ function generateBITUI() {
     });
 
 }
+
 function generateRAUCblock() {
     function createSection(title) {
         var section = document.createElement("div");
@@ -1537,134 +1519,313 @@ function generateRAUCblock() {
 
     var container = document.createElement("div");
 
+     // Current Bootable Status Section
     var BootStatus = createSection("Current Bootable Status:");
     BootStatus.className = 'rauc_content';
-    var status = document.createElement("p");
-    status.className = 'descontent';
-    status.id = "status-output";
+
+    var statusTable = document.createElement('table');
+    statusTable.className = "statusTable";
+    var statusRow = document.createElement('tr');
+
+    var statusData = document.createElement('td');
+    statusData.className = 'descontent';
+    statusData.id = "status-output";
+    statusRow.appendChild(statusData);
+    statusTable.appendChild(statusRow);
+
+    var BootedRow = document.createElement('tr');
+    var BbootedStatus = document.createElement('td');
+    BbootedStatus.className = 'descontent';
+    BbootedStatus.textContent = "Image B:";
+    var imageBboot = document.createElement('p');
+    imageBboot.className = 'descontent';
+    imageBboot.id = "imageB-boot";
+    BbootedStatus.appendChild(imageBboot);
+
+    var AbootedStatus = document.createElement('td');
+    AbootedStatus.className = 'descontent';
+    AbootedStatus.textContent = "Image A:";
+    var imageAboot = document.createElement('p');
+    imageAboot.className = 'descontent';
+    imageAboot.id = "imageA-boot";
+    AbootedStatus.appendChild(imageAboot);
+
+    BootedRow.appendChild(BbootedStatus);
+    BootedRow.appendChild(AbootedStatus);
+    statusTable.appendChild(BootedRow);
 
     $.ajax({
-        url:"/raucupdate",
-        type:"GET",
-        dataType:"json",
-        data:{"func":"status"},
-        success: function(res) {
+        url: "/raucupdate",
+        type: "GET",
+        dataType: "json",
+        data: { "func": "status", "target": "", "params": "" },
+        success: function (res) {
             if (res.data) {
-                document.getElementById("status-output").textContent = res.data.join("\n");
+                var result = res.data;
+                // Replace ANSI color codes with HTML span elements
+                result = result.replace(/\x1b\[34m/g, '<span style="color: white;font-weight: bold;">');  // Blue text
+                result = result.replace(/\x1b\[31m/g, '<span style="color: red;font-weight: bold;">');   // Red text
+                result = result.replace(/\x1b\[32m/g, '<span style="color: green;font-weight: bold;">'); // Green text
+                result = result.replace(/\x1b\[0m/g, '</span>');                        // Reset color
+
+                var lines = result.split('\n');
+                var bootedFrom = lines.find(line => line.includes('Booted from:'));
+                if(bootedFrom){
+                    var bootedStatus = bootedFrom.split(': ')[1].trim();
+                    var bootedText = bootedStatus.includes('rootfs.0') ? 'Booted from: <b>rootfs.0 Image A</b>' : 'Booted from: <b>rootfs.1 Image B</b>';
+                    document.getElementById("status-output").innerHTML = `${bootedText}`;
+                    if (bootedText.endsWith("Image A</b>")) {
+                    imgAConfig.radioInput.checked = true;
+                    } else if (bootedText.endsWith("Image B</b>")) {
+                        imgBConfig.radioInput.checked = true;
+                    }
+                }
+                var rootfsB = lines.find(line => line.includes('[rootfs.1]'));
+                if (rootfsB) {
+                    var statusB = lines[lines.indexOf(rootfsB) + 2].split('boot status: ')[1]?.split('\n')[0]?.trim();
+                    document.getElementById("imageB-boot").innerHTML = `boot status: ${statusB || '-'}`;
+                }
+
+                var rootfsA = lines.find(line => line.includes('[rootfs.0]'));
+                if (rootfsA) {
+                    var statusA = lines[lines.indexOf(rootfsA) + 2].split('boot status: ')[1]?.split('\n')[0]?.trim();
+                    document.getElementById("imageA-boot").innerHTML = `boot status: ${statusA || '-'}`;
+                }
             } else if (res.error) {
                 document.getElementById("status-output").textContent = "Error: " + res.error;
             }
         },
-        error: function() {
+        error: function () {
             document.getElementById("status-output").textContent = "Error fetching RAUC status.";
         }
-     });
-    BootStatus.appendChild(status);
+    });
+    BootStatus.appendChild(statusTable);
     container.appendChild(BootStatus);
 
+
+
+    // Switch Partition Section
     var SwitchPartition = createSection("Switch Partition:");
     SwitchPartition.className = 'rauc_content';
     container.appendChild(SwitchPartition);
 
-    function createRadioButton(id, name, value, labelText, changeHandler) {
+    function createRadioButton(id, name, value, labelText) {
         var radioInput = document.createElement('input');
         radioInput.type = 'radio';
         radioInput.id = id;
         radioInput.name = name;
         radioInput.value = value;
-        radioInput.addEventListener('change', changeHandler);
 
         var label = document.createElement('label');
         label.htmlFor = id;
         label.appendChild(document.createTextNode(labelText));
 
-        var lineBreak = document.createElement('br');
-
-        return { radioInput, label, lineBreak };
+        return { radioInput, label };
     }
 
-    function RadioButtonCreation(ajaxData) {
-        return function() {
-            if (this.checked) {
-                $.ajax({
-                    url: "/raucupdate",
-                    type: "GET",
-                    dataType: "json",
-                    data: { "func": ajaxData },
-                    success: function(res) {
-                        if (res.data) {
-                            alert(res.data);
-                        }
-                    },
-                    error: function() {
-                        alert("not booted");
+    var configbtn = document.createElement("button");
+    configbtn.textContent = "Configure";
+    configbtn.className = 'configBtn';
+
+   function configurePartition() {
+        var selectedRadio = document.querySelector('input[name="switch-partition"]:checked');
+        if (selectedRadio) {
+            var ajaxData = selectedRadio.value === 'image A' ? 'status mark-active booted' : 'status mark-active other';
+
+            $.ajax({
+                url: "/raucupdate",
+                type: "GET",
+                dataType: "json",
+                data: { "func": ajaxData, "target":"", "params":"" },
+                success: function(res) {
+                    if (res.data) {
+                        alert(res.data);
                     }
-                });
-            }
-        };
+                },
+                error: function() {
+                    alert("not booted");
+                }
+            });
+        } else {
+            alert("Please select a Partition.");
+        }
     }
+    configbtn.addEventListener('click', configurePartition);
+    var tablecomp = document.createElement('table');
+    tablecomp.className = 'radiobuttons';
 
-    var radioBtns = document.createElement('div');
-    radioBtns.className = 'radiobuttons';
+    var trcomp1 = document.createElement('tr');
 
-    var imgAConfig = createRadioButton('imageA', 'switch-partition', 'image A', 'Image A', RadioButtonCreation('active_booted'));
-    var imgBConfig = createRadioButton('imageB', 'switch-partition', 'image B', 'Image B', RadioButtonCreation('active_other'));
+    var imgAConfig = createRadioButton('imageA', 'switch-partition', 'image A', ' Image A');
+    var imgBConfig = createRadioButton('imageB', 'switch-partition', 'image B', ' Image B');
 
-    radioBtns.appendChild(imgAConfig.radioInput);
-    radioBtns.appendChild(imgAConfig.label);
-    radioBtns.appendChild(imgAConfig.lineBreak);
-    radioBtns.appendChild(imgBConfig.radioInput);
-    radioBtns.appendChild(imgBConfig.label);
+    var tdcomp1 = document.createElement('td');
+    tdcomp1.appendChild(imgAConfig.radioInput);
+    tdcomp1.appendChild(imgAConfig.label);
+    trcomp1.appendChild(tdcomp1);
 
-    SwitchPartition.appendChild(radioBtns);
+    var tdcomp2 = document.createElement('td');
+    tdcomp2.appendChild(imgBConfig.radioInput);
+    tdcomp2.appendChild(imgBConfig.label);
+    trcomp1.appendChild(tdcomp2);
 
+    tablecomp.appendChild(trcomp1);
+
+    var trcomp2 = document.createElement('tr');
+    var configBtnCell = document.createElement('td');
+    configBtnCell.colSpan = 2;
+    configBtnCell.appendChild(configbtn);
+    trcomp2.appendChild(configBtnCell);
+
+    tablecomp.appendChild(trcomp2);
+
+    SwitchPartition.appendChild(tablecomp);
+
+    // Upload and Flash Partition Section
     var uploadFlashSection = createSection("Upload and Flash Partition:");
     uploadFlashSection.className = 'rauc_content';
-    container.appendChild(uploadFlashSection);
 
+    var uploadTable = document.createElement('table');
+    var BrowseRow = document.createElement('tr');
+    var uploadRow = document.createElement('tr');
+
+    var fileInputCell = document.createElement('td');
+    fileInputCell.style.display = 'flex';
+    fileInputCell.style.alignItems  = 'center';
     var labelFileInput = document.createElement('label');
     labelFileInput.setAttribute('for', 'file-input');
     labelFileInput.className = 'file-upload';
     labelFileInput.textContent = 'Browse';
 
-    var fileNameDisplay = document.createElement('span');
-    fileNameDisplay.textContent = 'No file chosen';
-    fileNameDisplay.classList.add('file-name');
-    fileNameDisplay.id = 'file-name';
+    var smload = document.createElement("div");
+    smload.id="uploadraucid";
+    smload.style.display = 'inline-block';
+    smload.style.marginLeft = '15px';
+    var tip=document.createElement("a");
+    tip.id="uploadraucstatus";
+    tip.classList.add("tooltiptext");
+    smload.append(tip);
 
     var fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.id = 'file-input';
     fileInput.className = 'file-input';
     fileInput.style.display = 'none';
-    fileInput.addEventListener('change', function() {
-            var fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
-            fileNameDisplay.textContent = fileName;
+    $('#rauc_file_name').change(function(e){
+        document.getElementById("uploadraucid").className = "";
+        document.getElementById("uploadraucstatus").innerHTML = "";
     });
+    fileInput.addEventListener('change', function(event) {
+    var file = event.target.files[0];
+    if (file) {
+
+        document.getElementById("uploadraucstatus").innerHTML = "";
+        document.getElementById("uploadraucid").className = "";
+        document.getElementById("uploadraucid").classList.add("ministatusloading");
+        var formData = new FormData();
+        formData.append("file", file);
+        fileUploder(formData, file, "rauc_file_name", "rauc")
+            .then(function(response) {
+               if (response === "Success") {
+                    document.getElementById("uploadraucid").className = "";
+                    document.getElementById("uploadraucid").classList.add("tooltip", "ministatussuccess");
+                    document.getElementById("uploadraucstatus").innerHTML = "Success";
+                } else {
+                    document.getElementById("uploadraucid").className = "";
+                    document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
+                    document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
+                }
+            })
+            .catch(function(error) {
+                document.getElementById("uploadraucid").className = "";
+                document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
+                document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
+            });
+    }
+    });
+
+    var fileNameDisplay = document.createElement('span');
+    fileNameDisplay.classList.add('file-name');
+    fileNameDisplay.id = 'rauc_file_name';
+    fileNameDisplay.textContent = 'No file chosen';
+
+    var hiddenFileNameInput = document.createElement('input');
+    hiddenFileNameInput.type = 'hidden';
+    hiddenFileNameInput.id = 'rauc_hidden_file_name';
+
+    fileInputCell.appendChild(hiddenFileNameInput);
+
+    fileInput.addEventListener('change', function() {
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
+        fileNameDisplay.textContent = fileName;
+        hiddenFileNameInput.value = fileName;
+    });
+
+    fileInputCell.appendChild(labelFileInput);
+    fileInputCell.appendChild(fileInput);
+    fileInputCell.appendChild(fileNameDisplay);
+    fileInputCell.append(smload);
+    BrowseRow.appendChild(fileInputCell);
+
+    var smload1 = document.createElement("div");
+    smload1.id="installraucid";
+    smload1.style.display = 'inline-block';
+    smload1.style.marginLeft = '15px';
+    smload1.style.marginTop = '5px';
+    smload1.style.float = 'left';
+    var tip1=document.createElement("a");
+    tip1.id="installraucstatus";
+    tip1.classList.add("tooltiptext");
+    smload1.append(tip1);
+
+    var uploadBtnCell = document.createElement('td');
     var uploadBtn = document.createElement("button");
     uploadBtn.className = "file-upload";
-    uploadBtn.textContent = 'Upload';
-    uploadBtn.onclick = function (){
+    uploadBtn.style.marginTop = '0px';
+    uploadBtn.textContent = 'Flash';
+    uploadBtn.onclick = function () {
+    $('#loader').show();
+        document.getElementById("installraucstatus").innerHTML = "";
+        document.getElementById("installraucid").className = "";
+        document.getElementById("installraucid").classList.add("ministatusloading");
+        var uplodedFile = $('#rauc_hidden_file_name').val().split("\t")[0];
         $.ajax({
-        url:"/raucupdate",
-        type:"GET",
-        dataType:"json",
-        data:{"func":"install"},
-        success: function(res) {
-            if (res.data) {
-
+            url: "/raucupdate",
+            type: "GET",
+            dataType: "json",
+            data: { "func": "install /data/"+uplodedFile, "target":"", "params":"" },
+            success: function(res) {
+                if (res.status=='success') {
+                    $('#loader').hide();
+                    alert("flash successful!");
+                    document.getElementById("installraucid").className = "";
+                    document.getElementById("installraucid").classList.add("tooltip", "ministatussuccess");
+                    document.getElementById("installraucstatus").innerHTML = "Flash Success";
+                }else{
+                    $('#loader').hide();
+                    alert(res.data);
+                    document.getElementById("installraucid").className = "";
+                    document.getElementById("installraucid").classList.add("tooltip", "ministatusfail");
+                    document.getElementById("installraucstatus").innerHTML = "Flash Failed";
+                }
+            },
+            error: function() {
+                $('#loader').hide();
+                alert("install failed!");
+                document.getElementById("installraucid").className = "";
+                document.getElementById("installraucid").classList.add("tooltip", "ministatusfail");
+                document.getElementById("installraucstatus").innerHTML = "Flash Failed";
             }
-        },
-        error: function() {
-
-        }
-     });
+        });
     };
+    uploadBtnCell.appendChild(uploadBtn);
+    uploadBtnCell.appendChild(smload1);
+    uploadRow.appendChild(uploadBtnCell);
 
-    uploadFlashSection.appendChild(labelFileInput);
-    uploadFlashSection.appendChild(fileInput);
-    uploadFlashSection.appendChild(fileNameDisplay);
-    uploadFlashSection.appendChild(uploadBtn);
+    uploadTable.appendChild(BrowseRow);
+    uploadTable.appendChild(uploadRow);
+    uploadFlashSection.appendChild(uploadTable);
+    container.appendChild(uploadFlashSection);
 
     $("#rauc_update_screen").append(container);
 }
@@ -2442,6 +2603,7 @@ $(document).ready(function () {
 	loadRefreshData();
 	upload_clock_files("pdi");
 	upload_clock_files("clock");
+	upload_clock_files("rauc");
         if(!listsjson_sc.listfeature.includes("listBIT")){
         	$("#boardinterfacetest").remove();
     	}

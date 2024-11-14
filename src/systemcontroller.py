@@ -29,13 +29,15 @@ app = Flask(__name__)
 api = Api(app)
 app.config['PDI_UPLOAD_FOLDER'] = app_config["PDIFilePath"]
 app.config['UPLOAD_FOLDER'] = app_config["uploaded_files_path"]
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 * 1024 # 1 GB
 ALLOWED_CLK_EXTENSIONS = set(app_config["allowed_clock_files"])
 #ALLOWED_PDI_EXTENSIONS = set(app_config["allowed_pdi_files"])
 
 def allowed_clk_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_CLK_EXTENSIONS
 def allowed_pdi_file(filename):
+    return True
+def allowed_rauc_file(filename):
     return True
 
 @app.route('/')
@@ -254,6 +256,9 @@ if __name__ == '__main__':
             elif req == 'pdi' and file and allowed_pdi_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['PDI_UPLOAD_FOLDER']+app_config["deviname"], filename))
+            elif req == 'rauc' and file and allowed_rauc_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['RAUC_UPLOAD_FOLDER'], filename))
             else:
                 errors = True
 

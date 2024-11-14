@@ -195,6 +195,17 @@ class ClockFilesList(Resource):
                     }
                 }
                 return resp_json,200
+            elif req == "rauc":
+                raucfiles = os.listdir(app_config["raucFilepath"]) if os.path.exists(app_config["raucFilepath"]) else []
+                resp_json = {
+                    "status": "success"
+                    , "data": {
+                        "rauc": {
+                            "rauc_files": raucfiles
+                        }
+                    }
+                }
+                return resp_json,200
             else:
                 resp_json = {
                     "status": "error",
@@ -507,31 +518,21 @@ class exportCSV(Resource):
 class RaucUpdate(Resource):
     def get(self, ):
         try:
-            cmd = "rauc status"
             req = request.args.get('func')
-            if req == "status":
-                result = Term.exec_cmd(cmd+ " --detailed").split('\n')
+            tar = request.args.get('target')
+            cmd_gen = "rauc " + req
+            if len(tar):
+                cmd_gen = cmd_gen + " -t '" + tar + "'"
+            result = Term.exec_cmd(cmd_gen)
+            print(cmd_gen)
+            print(result)
+            if "ERROR:" in result or "failed" in result:
                 resp_json = {
-                    "status": "success"
+                    "status": "error"
                     , "data": result
                 }
                 return resp_json
-            if req == "active_booted":
-                result = Term.exec_cmd(cmd+" mark-active booted")
-                resp_json = {
-                    "status": "success"
-                    , "data": result
-                }
-                return resp_json
-            if req == "active_other":
-                result = Term.exec_cmd(cmd+" mark-active other")
-                resp_json = {
-                    "status": "success"
-                    , "data": result
-                }
-                return resp_json
-            if req == "install":
-                result = Term.exec_cmd("rauc install")
+            else:
                 resp_json = {
                     "status": "success"
                     , "data": result

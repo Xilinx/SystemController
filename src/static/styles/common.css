@@ -1303,18 +1303,24 @@ color: white;
   visibility: visible;
 }
 /*rauc update*/
+.statusTable{
+    margin: 10px 0px 0px 40px;
+    background: #007c97;
+    width: 90%;
+    padding: 10px;
+    border-radius: 10px;
+}
 .file-name {
-    color: white;
     display: block;
     margin: 20px;
     padding: 2px;
-    border: 1px solid;
     width: 30%;
-    text-align: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     border-radius: 5px;
+    color: white;
+    border: 1px solid white;
 }
 .file-upload {
     width: 15%;
@@ -1333,15 +1339,28 @@ color: white;
 }
 .rauc_content {
     padding: 20px;
-    margin:20px;
+    margin: 0 20px 0 20px;
 }
 .radiobuttons{
     color: white;
     margin-top: 10px;
-    position: absolute;
+/*    position: absolute; */
     left: 5%;
     font-size: large;
 }
+.radiobuttons td{
+    float: left;
+    margin-left: 35px;
+}
+.configBtn{
+    margin: 10px 10px 0 15px;
+    width: 100%;
+    text-align: center;
+    padding: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 #versionLabel{
     float: right;
     /*margin-top: 20px;*/
