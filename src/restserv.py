@@ -524,9 +524,7 @@ class RaucUpdate(Resource):
             if len(tar):
                 cmd_gen = cmd_gen + " -t '" + tar + "'"
             result = Term.exec_cmd(cmd_gen)
-            print(cmd_gen)
-            print(result)
-            if "ERROR:" in result or "failed" in result:
+            if "ERROR:" in result or "failed" in result or "No such file" in result:
                 resp_json = {
                     "status": "error"
                     , "data": result

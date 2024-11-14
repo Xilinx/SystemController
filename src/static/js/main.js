@@ -1565,7 +1565,7 @@ function generateRAUCblock() {
                 // Replace ANSI color codes with HTML span elements
                 result = result.replace(/\x1b\[34m/g, '<span style="color: white;font-weight: bold;">');  // Blue text
                 result = result.replace(/\x1b\[31m/g, '<span style="color: red;font-weight: bold;">');   // Red text
-                result = result.replace(/\x1b\[32m/g, '<span style="color: green;font-weight: bold;">'); // Green text
+                result = result.replace(/\x1b\[32m/g, '<span style="color: #16f316;font-weight: bold;">'); // Green text
                 result = result.replace(/\x1b\[0m/g, '</span>');                        // Reset color
 
                 var lines = result.split('\n');
@@ -1582,14 +1582,18 @@ function generateRAUCblock() {
                 }
                 var rootfsB = lines.find(line => line.includes('[rootfs.1]'));
                 if (rootfsB) {
-                    var statusB = lines[lines.indexOf(rootfsB) + 2].split('boot status: ')[1]?.split('\n')[0]?.trim();
-                    document.getElementById("imageB-boot").innerHTML = `boot status: ${statusB || '-'}`;
+                var rootfsBIndex = lines.indexOf(rootfsB);
+                var statusBLine = lines.slice(rootfsBIndex, rootfsBIndex + 4).find(line => line.includes('boot status:'));
+                var statusB = statusBLine ? statusBLine.split('boot status: ')[1].trim() : '-';
+                document.getElementById("imageB-boot").innerHTML = `boot status: ${statusB}`;
                 }
 
                 var rootfsA = lines.find(line => line.includes('[rootfs.0]'));
                 if (rootfsA) {
-                    var statusA = lines[lines.indexOf(rootfsA) + 2].split('boot status: ')[1]?.split('\n')[0]?.trim();
-                    document.getElementById("imageA-boot").innerHTML = `boot status: ${statusA || '-'}`;
+                var rootfsAIndex = lines.indexOf(rootfsA);
+                var statusALine = lines.slice(rootfsAIndex, rootfsAIndex + 4).find(line => line.includes('boot status:'));
+                var statusA = statusALine ? statusALine.split('boot status: ')[1].trim() : '-';
+                document.getElementById("imageA-boot").innerHTML = `boot status: ${statusA}`;
                 }
             } else if (res.error) {
                 document.getElementById("status-output").textContent = "Error: " + res.error;
@@ -1711,6 +1715,7 @@ function generateRAUCblock() {
     fileInput.id = 'file-input';
     fileInput.className = 'file-input';
     fileInput.style.display = 'none';
+    fileInput.accept = '.raucb';
     $('#rauc_file_name').change(function(e){
         document.getElementById("uploadraucid").className = "";
         document.getElementById("uploadraucstatus").innerHTML = "";
