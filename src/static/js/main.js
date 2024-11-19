@@ -749,13 +749,18 @@ function cmdBtnonclick(e){
                         if(cn.getAttribute("respKey")){
                             if(cn.nodeName.toLowerCase() == "label"){
                                 if (res.data[cn.getAttribute("respKey")] != undefined){
-                                    cn.innerHTML = res.data[cn.getAttribute("respKey")] + " " + cn.getAttribute("notation");
+                                    if (res.data[cn.getAttribute("respKey")] != "-"){
+                                        cn.innerHTML = res.data[cn.getAttribute("respKey")] + " " + cn.getAttribute("notation");
+                                     }
+                                     else{
+                                        cn.innerHTML = "NA";
+                                     }
                                 }
                             }
                         }
 			if(cn.nodeName.toLowerCase() == "div"){
 			    if (res.status == "error"){
-                                cn.childNodes[0].innerHTML = res.data+restime();
+                                cn.childNodes[0].innerHTML = res.data.message+restime();
                                 cn.className = '';
                                 cn.classList.add("ministatusfail");
                                 cn.classList.add("tooltip");
