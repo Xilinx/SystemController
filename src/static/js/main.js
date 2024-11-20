@@ -981,6 +981,11 @@ function generateBoardSettingsUI(){
 }
 function displaypopup(title, message,res,e,cn,inprg,count){
 //    document.getElementById("popform").innerHTML = "";
+    var bitsMessage = res.data.message.split('\n');
+    bitsMessage = bitsMessage.filter(function(line) {
+        return !line.includes("Image location=");
+    });
+    var updatedBitsMessage = bitsMessage.join('\n');
     var bodycomp = document.createElement("div");
     bodycomp.classList.add("popup-content");
 
@@ -1005,7 +1010,8 @@ function displaypopup(title, message,res,e,cn,inprg,count){
     trcomp.appendChild(tdcomp);
     //var em0 = document.createTextNode(res.data.message.replaceAll('\n',br));
     //tdcomp.appendChild(em0);
-    tdcomp.innerHTML = res.data.message.replaceAll('\n','<br>');
+    manualTestpopupImages(tbodycomp, res.data.message);
+    tdcomp.innerHTML = updatedBitsMessage.replaceAll('\n','<br>');
     tbodycomp.appendChild(trcomp);
     tablecomp.appendChild(tbodycomp);
     bodycomp.appendChild(tablecomp);
@@ -1061,6 +1067,78 @@ function displaypopup(title, message,res,e,cn,inprg,count){
     b.style.display = "block";
     document.getElementById("apiloadingdiv").style.display = "none";
     
+}
+function manualTestpopupImages(popupimage, message) {
+    var em1 = document.createElement("div");
+    em1.classList.add("popup_image_bg_div");
+
+    var scrollWrapper = document.createElement("div");
+    scrollWrapper.classList.add("scroll-wrapper");
+    scrollWrapper.style.overflow = "auto"; // Enable scrolling
+    scrollWrapper.style.position = "relative";
+    scrollWrapper.style.width = "100%"; // Set the width of the scroll area
+    scrollWrapper.style.height = "100%"; // Set the height of the scroll area
+
+    var em2 = document.createElement("img");
+    em2.classList.add("popup_image_bg");
+    em2.setAttribute("src", app_strings.test_board.center_pane.image);
+
+    var zoomButton = document.createElement("button");
+    zoomButton.innerHTML = "ZoomIn";
+    zoomButton.classList.add("zoom_button");
+
+    var locationMatch = message.match(/Image location=(\d+),(\d+)/);
+    if (locationMatch) {
+        popupimage.append(em1);
+        popupimage.append(zoomButton);
+    }
+    var sizeMatch = message.match(/size=(\d+),(\d+)/);
+
+    var X = locationMatch ? parseInt(locationMatch[1]) : 0;
+    var Y = locationMatch ? parseInt(locationMatch[2]) : 0;
+    var Width = sizeMatch ? parseInt(sizeMatch[1]) : 0;
+    var Height = sizeMatch ? parseInt(sizeMatch[2]) : 0;
+
+    var zoomLevel = 1;
+    var isZoomedIn = false;
+
+    var box = document.createElement("div");
+    box.classList.add("popup-box");
+    box.style.left = `${X}px`;
+    box.style.top = `${Y}px`;
+    box.style.width = `${Width}px`;
+    box.style.height = `${Height}px`;
+
+    scrollWrapper.appendChild(em2);
+    scrollWrapper.appendChild(box);
+    em1.appendChild(scrollWrapper);
+
+    function zoomImage() {
+        if (isZoomedIn) {
+            zoomLevel = 1;
+            em2.style.transform = `scale(${zoomLevel}) translate(0, 0)`;
+            box.style.transform = `scale(${zoomLevel}) translate(0, 0)`;
+            box.style.left = `${X}px`;
+            box.style.top = `${Y}px`;
+            zoomButton.innerHTML = "ZoomIn";
+        } else {
+            zoomLevel = 2;
+            em2.style.transform = `scale(${zoomLevel})`;
+            box.style.transform = `scale(${zoomLevel})`;
+            zoomButton.innerHTML = "ZoomOut";
+            box.style.left = `${X*2}px`;
+            box.style.top = `${Y*2}px`;
+            var boxCenterX = X + Width / 2;
+            var boxCenterY = Y + Height / 2;
+
+            // Adjust scroll position to center the zoomed box
+            scrollWrapper.scrollLeft = (boxCenterX * zoomLevel) - (scrollWrapper.offsetWidth);
+            scrollWrapper.scrollTop = (boxCenterY * zoomLevel) - (scrollWrapper.offsetHeight);
+        }
+        isZoomedIn = !isZoomedIn;
+    }
+
+    zoomButton.addEventListener("click", zoomImage);
 }
 function manualtestresult(result,res, e,cn,inprg,count){
                                         if(result){
