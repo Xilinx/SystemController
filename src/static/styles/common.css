@@ -1304,7 +1304,7 @@ color: white;
 }
 /*rauc update*/
 .statusTable{
-    margin: 10px 0px 0px 40px;
+    margin: 10px 0px 0px 30px;
     background: #007c97;
     width: 90%;
     padding: 10px;
@@ -1314,7 +1314,7 @@ color: white;
     display: block;
     margin: 20px;
     padding: 2px;
-    width: 30%;
+    width: 70%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

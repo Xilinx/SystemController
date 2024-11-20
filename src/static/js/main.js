@@ -1507,7 +1507,6 @@ function generateBITUI() {
     });
 
 }
-
 function generateRAUCblock() {
     function createSection(title) {
         var section = document.createElement("div");
@@ -1525,39 +1524,42 @@ function generateRAUCblock() {
     var container = document.createElement("div");
 
      // Current Bootable Status Section
-    var BootStatus = createSection("Current Bootable Status:");
+    var BootStatus = createSection("Boot Image Status:");
     BootStatus.className = 'rauc_content';
 
     var statusTable = document.createElement('table');
     statusTable.className = "statusTable";
-    var statusRow = document.createElement('tr');
 
-    var statusData = document.createElement('td');
-    statusData.className = 'descontent';
-    statusData.id = "status-output";
-    statusRow.appendChild(statusData);
-    statusTable.appendChild(statusRow);
+    var currentStatusRow = document.createElement('tr');
+    var currentStatusLabel = document.createElement('td');
+    currentStatusLabel.className = 'descontent';
+    currentStatusLabel.textContent = "Current Status";
+    currentStatusLabel.style.textAlign = "center";
+    currentStatusLabel.style.fontSize  = "x-large";
+    currentStatusRow.appendChild(currentStatusLabel);
+    statusTable.appendChild(currentStatusRow);
 
-    var BootedRow = document.createElement('tr');
-    var BbootedStatus = document.createElement('td');
-    BbootedStatus.className = 'descontent';
-    BbootedStatus.textContent = "Image B:";
-    var imageBboot = document.createElement('p');
-    imageBboot.className = 'descontent';
-    imageBboot.id = "imageB-boot";
-    BbootedStatus.appendChild(imageBboot);
+    var requestedBootRow = document.createElement('tr');
+    var currentStatusData = document.createElement('td');
+    currentStatusData.className = 'descontent';
+    currentStatusData.innerHTML = "Last Booted Image : <span id='requested-boot' style='margin-left:0' class='descontent'></span>";
+    currentStatusData.id = "status-output";
+    requestedBootRow.appendChild(currentStatusData);
+    statusTable.appendChild(requestedBootRow);
 
+    var imageARow = document.createElement('tr');
     var AbootedStatus = document.createElement('td');
     AbootedStatus.className = 'descontent';
-    AbootedStatus.textContent = "Image A:";
-    var imageAboot = document.createElement('p');
-    imageAboot.className = 'descontent';
-    imageAboot.id = "imageA-boot";
-    AbootedStatus.appendChild(imageAboot);
+    AbootedStatus.innerHTML = "Image A : <span id='imageA-boot' style='margin-left:0' class='descontent'></span>";
+    imageARow.appendChild(AbootedStatus);
+    statusTable.appendChild(imageARow);
 
-    BootedRow.appendChild(BbootedStatus);
-    BootedRow.appendChild(AbootedStatus);
-    statusTable.appendChild(BootedRow);
+    var imageBRow = document.createElement('tr');
+    var BbootedStatus = document.createElement('td');
+    BbootedStatus.className = 'descontent';
+    BbootedStatus.innerHTML = "Image B : <span id='imageB-boot' style='margin-left:0' class='descontent'></span>";
+    imageBRow.appendChild(BbootedStatus);
+    statusTable.appendChild(imageBRow);
 
     $.ajax({
         url: "/raucupdate",
@@ -1567,38 +1569,39 @@ function generateRAUCblock() {
         success: function (res) {
             if (res.data) {
                 var result = res.data;
-                // Replace ANSI color codes with HTML span elements
                 result = result.replace(/\x1b\[34m/g, '<span style="color: white;font-weight: bold;">');  // Blue text
                 result = result.replace(/\x1b\[31m/g, '<span style="color: red;font-weight: bold;">');   // Red text
-                result = result.replace(/\x1b\[32m/g, '<span style="color: #16f316;font-weight: bold;">'); // Green text
+                result = result.replace(/\x1b\[32m/g, '<span style="color: #16f316 ;font-weight: bold;">'); // Green text
                 result = result.replace(/\x1b\[0m/g, '</span>');                        // Reset color
 
                 var lines = result.split('\n');
                 var bootedFrom = lines.find(line => line.includes('Booted from:'));
-                if(bootedFrom){
+                if (bootedFrom) {
                     var bootedStatus = bootedFrom.split(': ')[1].trim();
-                    var bootedText = bootedStatus.includes('rootfs.0') ? 'Booted from: <b>rootfs.0 Image A</b>' : 'Booted from: <b>rootfs.1 Image B</b>';
-                    document.getElementById("status-output").innerHTML = `${bootedText}`;
+                    var bootedText = bootedStatus.includes('rootfs.0') ? '<b>Image A</b>' : '<b>Image B</b>';
+                    document.getElementById("requested-boot").innerHTML = bootedText;
+
                     if (bootedText.endsWith("Image A</b>")) {
-                    imgAConfig.radioInput.checked = true;
+                        imgAConfig.radioInput.checked = true;
                     } else if (bootedText.endsWith("Image B</b>")) {
                         imgBConfig.radioInput.checked = true;
                     }
                 }
+
                 var rootfsB = lines.find(line => line.includes('[rootfs.1]'));
                 if (rootfsB) {
-                var rootfsBIndex = lines.indexOf(rootfsB);
-                var statusBLine = lines.slice(rootfsBIndex, rootfsBIndex + 4).find(line => line.includes('boot status:'));
-                var statusB = statusBLine ? statusBLine.split('boot status: ')[1].trim() : '-';
-                document.getElementById("imageB-boot").innerHTML = `boot status: ${statusB}`;
+                    var rootfsBIndex = lines.indexOf(rootfsB);
+                    var statusBLine = lines.slice(rootfsBIndex, rootfsBIndex + 4).find(line => line.includes('boot status:'));
+                    var statusB = statusBLine ? statusBLine.split('boot status: ')[1].trim() : '-';
+                    document.getElementById("imageB-boot").innerHTML = `${statusB}`;
                 }
 
                 var rootfsA = lines.find(line => line.includes('[rootfs.0]'));
                 if (rootfsA) {
-                var rootfsAIndex = lines.indexOf(rootfsA);
-                var statusALine = lines.slice(rootfsAIndex, rootfsAIndex + 4).find(line => line.includes('boot status:'));
-                var statusA = statusALine ? statusALine.split('boot status: ')[1].trim() : '-';
-                document.getElementById("imageA-boot").innerHTML = `boot status: ${statusA}`;
+                    var rootfsAIndex = lines.indexOf(rootfsA);
+                    var statusALine = lines.slice(rootfsAIndex, rootfsAIndex + 4).find(line => line.includes('boot status:'));
+                    var statusA = statusALine ? statusALine.split('boot status: ')[1].trim() : '-';
+                    document.getElementById("imageA-boot").innerHTML = `${statusA}`;
                 }
             } else if (res.error) {
                 document.getElementById("status-output").textContent = "Error: " + res.error;
@@ -1608,10 +1611,9 @@ function generateRAUCblock() {
             document.getElementById("status-output").textContent = "Error fetching RAUC status.";
         }
     });
+
     BootStatus.appendChild(statusTable);
     container.appendChild(BootStatus);
-
-
 
     // Switch Partition Section
     var SwitchPartition = createSection("Switch Partition:");
@@ -1732,6 +1734,7 @@ function generateRAUCblock() {
         document.getElementById("uploadraucstatus").innerHTML = "";
         document.getElementById("uploadraucid").className = "";
         document.getElementById("uploadraucid").classList.add("ministatusloading");
+        document.getElementById("flashBtn").disabled = true;
         var formData = new FormData();
         formData.append("file", file);
         fileUploder(formData, file, "rauc_file_name", "rauc")
@@ -1745,11 +1748,13 @@ function generateRAUCblock() {
                     document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
                     document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
                 }
+                document.getElementById("flashBtn").disabled = false;
             })
             .catch(function(error) {
                 document.getElementById("uploadraucid").className = "";
                 document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
                 document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
+                document.getElementById("flashBtn").disabled = false;
             });
     }
     });
@@ -1791,6 +1796,7 @@ function generateRAUCblock() {
     var uploadBtnCell = document.createElement('td');
     var uploadBtn = document.createElement("button");
     uploadBtn.className = "file-upload";
+    uploadBtn.id = "flashBtn";
     uploadBtn.style.marginTop = '0px';
     uploadBtn.textContent = 'Flash';
     uploadBtn.onclick = function () {
@@ -2004,6 +2010,7 @@ function generatePDIblock(){
     var button = document.createElement("input");
     button.classList.add("buttons");
     button.classList.add("dash_bm");
+    button.style.width = '60%';
     button.id="uploadpdi";
     button.setAttribute("value", "Browse");
     button.setAttribute("type", "file");
