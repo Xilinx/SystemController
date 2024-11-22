@@ -981,9 +981,9 @@ function generateBoardSettingsUI(){
 }
 function displaypopup(title, message,res,e,cn,inprg,count){
 //    document.getElementById("popform").innerHTML = "";
-    var bitsMessage = res.data.message.split('\n');
-    bitsMessage = bitsMessage.filter(function(line) {
-        return !line.includes("Image location=");
+    var Message = res.data.message.split('\n');
+    bitsMessage = Message.filter(function(line) {
+        return !line.toLowerCase().includes("image location");
     });
     var updatedBitsMessage = bitsMessage.join('\n');
     var bodycomp = document.createElement("div");
@@ -1010,7 +1010,7 @@ function displaypopup(title, message,res,e,cn,inprg,count){
     trcomp.appendChild(tdcomp);
     //var em0 = document.createTextNode(res.data.message.replaceAll('\n',br));
     //tdcomp.appendChild(em0);
-    manualTestpopupImages(tbodycomp, res.data.message);
+    var zoomButton = manualTestpopupImages(tbodycomp, res.data.message);
     tdcomp.innerHTML = updatedBitsMessage.replaceAll('\n','<br>');
     tbodycomp.appendChild(trcomp);
     tablecomp.appendChild(tbodycomp);
@@ -1057,7 +1057,10 @@ function displaypopup(title, message,res,e,cn,inprg,count){
        manualtestresult(true,res,e,cn,inprg,count);
     };
     em.classList.add("popupbuttons");
-    sp.appendChild(em)
+    sp.appendChild(em);
+    if (Message.some(line => line.toLowerCase().includes("image location"))) {
+        sp.appendChild(zoomButton);
+    }
     d.append(sp);
     d.append(heading);
 
@@ -1074,23 +1077,19 @@ function manualTestpopupImages(popupimage, message) {
 
     var scrollWrapper = document.createElement("div");
     scrollWrapper.classList.add("scroll-wrapper");
-    scrollWrapper.style.overflow = "auto"; // Enable scrolling
-    scrollWrapper.style.position = "relative";
-    scrollWrapper.style.width = "100%"; // Set the width of the scroll area
-    scrollWrapper.style.height = "100%"; // Set the height of the scroll area
 
     var em2 = document.createElement("img");
     em2.classList.add("popup_image_bg");
     em2.setAttribute("src", app_strings.test_board.center_pane.image);
 
-    var zoomButton = document.createElement("button");
-    zoomButton.innerHTML = "ZoomIn";
-    zoomButton.classList.add("zoom_button");
+    var zoomButton = document.createElement("input");
+    zoomButton.type = "button";
+    zoomButton.value = "ZoomIn Image";
+    zoomButton.classList.add("popupbuttons");
 
     var locationMatch = message.match(/Image location=(\d+),(\d+)/);
     if (locationMatch) {
         popupimage.append(em1);
-        popupimage.append(zoomButton);
     }
     var sizeMatch = message.match(/size=(\d+),(\d+)/);
 
@@ -1120,26 +1119,28 @@ function manualTestpopupImages(popupimage, message) {
             box.style.transform = `scale(${zoomLevel}) translate(0, 0)`;
             box.style.left = `${X}px`;
             box.style.top = `${Y}px`;
-            zoomButton.innerHTML = "ZoomIn";
+            zoomButton.value = "ZoomIn Image";
         } else {
             zoomLevel = 2;
-            em2.style.transform = `scale(${zoomLevel})`;
-            box.style.transform = `scale(${zoomLevel})`;
-            zoomButton.innerHTML = "ZoomOut";
-            box.style.left = `${X*2}px`;
-            box.style.top = `${Y*2}px`;
-            var boxCenterX = X + Width / 2;
-            var boxCenterY = Y + Height / 2;
+            em2.style.transform = `scale(${zoomLevel}) translate(${-X / zoomLevel}px, ${-Y / zoomLevel}px)`;
+            box.style.transform = `scale(${zoomLevel}) translate(${-X / zoomLevel}px, ${-Y / zoomLevel}px)`;
+            zoomButton.value = "ZoomOut";
+            var scaledX = X * zoomLevel;
+            var scaledY = Y * zoomLevel;
 
-            // Adjust scroll position to center the zoomed box
-            scrollWrapper.scrollLeft = (boxCenterX * zoomLevel) - (scrollWrapper.offsetWidth);
-            scrollWrapper.scrollTop = (boxCenterY * zoomLevel) - (scrollWrapper.offsetHeight);
+            box.style.left = `${scaledX}px`;
+            box.style.top = `${scaledY}px`;
+
+           scrollWrapper.scrollLeft = scaledX;
+            scrollWrapper.scrollTop = scaledY;
         }
         isZoomedIn = !isZoomedIn;
     }
 
     zoomButton.addEventListener("click", zoomImage);
+    return zoomButton;
 }
+
 function manualtestresult(result,res, e,cn,inprg,count){
                                         if(result){
                                         if(count != parseInt(e.target.getAttribute("test_type"))){
