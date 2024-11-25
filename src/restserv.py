@@ -267,7 +267,7 @@ class MultiCmdQuery(Resource):
                     isFail = True
 
                 else :
-                    result1 = parse.parse_cmd_resp(response, req, tar, params);
+                    result1 = parse.parse_cmd_resp(response, req, tar, params)
                     result.update(result1)
                     isSuccess = True
                     if "error" not in result.keys():
@@ -288,13 +288,17 @@ class MultiCmdQuery(Resource):
             else:
                 resp_json = {
                     "status": "error"
-                    , "data": result["error"]
+                    , "data": {
+                        "message": result["error"]
+                    }
                 }
                 return resp_json, 200
         except Exception as e:
             resp_json = {
                 "status":"error"
-                ,"data":{"error":"%s"%e}
+                , "data":{
+                    "message": result["error"]
+                }
             }
             return resp_json,500
 class CmdQuery(Resource):

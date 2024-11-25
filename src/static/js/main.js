@@ -2207,7 +2207,7 @@ function generatePDIblock(){
             document.getElementById("loadpdiloadid").className = "";
                 if (res.status === 'error'){
 			document.getElementById("loadpdiloadid").classList.add("tooltip");
-			document.getElementById("loadpdistatus").innerHTML = res.data;
+			document.getElementById("loadpdistatus").innerHTML = res.data.message;
 		    	document.getElementById("loadpdiloadid").classList.add("ministatusfail");
                 }else{
 			document.getElementById("loadpdiloadid").classList.add("tooltip");
@@ -2241,7 +2241,7 @@ function generatePDIblock(){
             document.getElementById("setbootpdiloadid").className = "";
                 if (res.status === 'error'){
 			document.getElementById("setbootpdiloadid").classList.add("tooltip");
-			document.getElementById("setbootpdistatus").innerHTML = res.data;
+			document.getElementById("setbootpdistatus").innerHTML = res.data.message;
 		    	document.getElementById("setbootpdiloadid").classList.add("ministatusfail");
                 }else{
 			document.getElementById("setbootpdiloadid").classList.add("tooltip");
@@ -2271,7 +2271,7 @@ function generatePDIblock(){
 		document.getElementById("resetbootpdiloadid").className = "";
                 if (res.status === 'error'){
 			document.getElementById("resetbootpdiloadid").classList.add("tooltip");
-			document.getElementById("resetbootpdistatus").innerHTML = res.data;
+			document.getElementById("resetbootpdistatus").innerHTML = res.data.message;
 			document.getElementById("resetbootpdiloadid").classList.add("ministatusfail");
                 }else{
 			document.getElementById("resetbootpdiloadid").classList.add("tooltip");
