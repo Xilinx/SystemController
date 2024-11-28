@@ -139,7 +139,6 @@ class EEPROMDetails(Resource):
                 ,"data":{"error":"%s"%e}
             }
             return resp_json,500
-
 class ClockFilesList(Resource):
     def get(self,):
         try:
@@ -219,6 +218,7 @@ class ClockFilesList(Resource):
             }
             print('e',e)
             return resp_json,500
+
 class MultiCmdQuery(Resource):
     def get(self,):
         try:
@@ -524,7 +524,10 @@ class RaucUpdate(Resource):
         try:
             req = request.args.get('func')
             tar = request.args.get('target')
-            cmd_gen = "rauc " + req
+            if req == "reboot":
+                cmd_gen = req
+            else:
+                cmd_gen = "rauc " + req
             if len(tar):
                 cmd_gen = cmd_gen + " -t '" + tar + "'"
             result = Term.exec_cmd(cmd_gen)
