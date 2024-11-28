@@ -1587,58 +1587,164 @@ function generateBITUI() {
 
 }
 function generateRAUCblock() {
-    function createSection(title) {
-        var section = document.createElement("div");
-        section.style.width = '50%';
+    var hideBackground = document.createElement('div');
+    hideBackground.className = 'popup-background';
+    hideBackground.style.display = "block";
 
-        var header = document.createElement("h2");
-        header.textContent = title;
-        header.style.borderBottom = '1px solid white';
-        header.className = 'subheadings';
+    var mainContainer = document.createElement("div");
+    mainContainer.classList.add("rauc_container");
 
-        section.appendChild(header);
-        return section;
-    }
+    /* Partition A */
+    var containerA = document.createElement("div");
+    containerA.classList.add("partition");
 
-    var container = document.createElement("div");
+    var partitionA = document.createElement("h2");
+    partitionA.textContent = "Partition A";
+    partitionA.style.color = "white";
 
-     // Current Bootable Status Section
-    var BootStatus = createSection("Boot Image Status:");
-    BootStatus.className = 'rauc_content';
+    var statusA = document.createElement("p");
+    statusA.classList.add("rauc_status");
+    statusA.innerHTML = "Status  : <span id='imageA'></span> ";
+    statusA.style.color = "white";
 
-    var statusTable = document.createElement('table');
-    statusTable.className = "statusTable";
+    var RunBootStatusA = document.createElement("p");
+    RunBootStatusA.innerHTML = "Run on next boot :<span id='statusimageA'></span>";
+    RunBootStatusA.style.color = "white";
 
-    var currentStatusRow = document.createElement('tr');
-    var currentStatusLabel = document.createElement('td');
-    currentStatusLabel.className = 'descontent';
-    currentStatusLabel.textContent = "Current Status";
-    currentStatusLabel.style.textAlign = "center";
-    currentStatusLabel.style.fontSize  = "x-large";
-    currentStatusRow.appendChild(currentStatusLabel);
-    statusTable.appendChild(currentStatusRow);
+    containerA.appendChild(partitionA);
+    containerA.appendChild(statusA);
+    containerA.appendChild(RunBootStatusA);
 
-    var requestedBootRow = document.createElement('tr');
-    var currentStatusData = document.createElement('td');
-    currentStatusData.className = 'descontent';
-    currentStatusData.innerHTML = "Last Booted Image : <span id='requested-boot' style='margin-left:0' class='descontent'></span>";
-    currentStatusData.id = "status-output";
-    requestedBootRow.appendChild(currentStatusData);
-    statusTable.appendChild(requestedBootRow);
+    /* Partition B */
+    var containerB = document.createElement("div");
+    containerB.classList.add("partition");
+    var partitionB = document.createElement("h2");
+    partitionB.textContent = "Partition B";
+    partitionB.style.color = "white";
 
-    var imageARow = document.createElement('tr');
-    var AbootedStatus = document.createElement('td');
-    AbootedStatus.className = 'descontent';
-    AbootedStatus.innerHTML = "Image A : <span id='imageA-boot' style='margin-left:0' class='descontent'></span>";
-    imageARow.appendChild(AbootedStatus);
-    statusTable.appendChild(imageARow);
+    var statusB = document.createElement("p");
+    statusB.classList.add("rauc_status");
+    statusB.innerHTML = "Status  : <span id='imageB'></span> ";
+    statusB.style.color = "white";
 
-    var imageBRow = document.createElement('tr');
-    var BbootedStatus = document.createElement('td');
-    BbootedStatus.className = 'descontent';
-    BbootedStatus.innerHTML = "Image B : <span id='imageB-boot' style='margin-left:0' class='descontent'></span>";
-    imageBRow.appendChild(BbootedStatus);
-    statusTable.appendChild(imageBRow);
+    var RunBootStatusB = document.createElement("p");
+    RunBootStatusB.innerHTML = "Run on next boot :<span id='statusimageB'></span>";
+    RunBootStatusB.style.color = "white";
+
+    var bootStatus = document.createElement("p");
+    bootStatus.classList.add("bootStatus");
+    bootStatus.innerHTML = "Currently Running";
+
+    containerB.appendChild(partitionB);
+    containerB.appendChild(statusB);
+    containerB.appendChild(RunBootStatusB);
+
+    /* rauc bundle update */
+    var raucFlashBtn = document.createElement("label");
+    raucFlashBtn.textContent = "Update Bundle";
+    raucFlashBtn.classList.add("rauc_button");
+    raucFlashBtn.id = "raucuploadBtn";
+    raucFlashBtn.setAttribute('for', 'file-input');
+
+    var fileNameDisplay = document.createElement('span');
+    fileNameDisplay.classList.add('file-name');
+    fileNameDisplay.id = 'rauc_file_name';
+    fileNameDisplay.textContent = 'No file chosen';
+    fileNameDisplay.style.display = 'none';
+
+    var hiddenFileNameInput = document.createElement('input');
+    hiddenFileNameInput.type = 'hidden';
+    hiddenFileNameInput.id = 'rauc_hidden_file_name';
+
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.id = 'file-input';
+    fileInput.classList.add("rauc_button");
+    fileInput.style.display = 'none';
+    fileInput.accept = '.raucb';
+    fileInput.addEventListener('change', function () {
+        var fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
+        fileNameDisplay.textContent = fileName;
+        hiddenFileNameInput.value = fileName;
+    });
+    fileInput.addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        if (file) {
+            $('#loader').show();
+            $('#raucupdate_screen').append(hideBackground);
+            var formData = new FormData();
+            formData.append("file", file);
+            fileUploder(formData, file, "rauc_file_name", "rauc")
+                .then(function (response) {
+                    if (response === "Success") {
+                        var uplodedFile = $('#rauc_hidden_file_name').val().split("\t")[0];
+                        $.ajax({
+                            url: "/raucupdate",
+                            type: "GET",
+                            dataType: "json",
+                            data: { "func": "install /data/" + uplodedFile, "target": "", "params": "" },
+                            success: function (res) {
+                                if (res.status == 'success') {
+                                    $('#loader').hide();
+                                    alert(res.data);
+                                    $(hideBackground).remove();
+                                } else {
+                                    $('#loader').hide();
+                                    alert(res.data);
+                                    $(hideBackground).remove();
+                                }
+                            },
+                            error: function () {
+                                $('#loader').hide();
+                                $(hideBackground).remove();
+                            }
+                        });
+                    } else {
+                        alert("File Upload Failed");
+                        $('#loader').hide();
+                        $(hideBackground).remove();
+                    }
+                })
+                .catch(function (error) {
+                    $('#loader').hide();
+                    $(hideBackground).remove();
+                });
+        }
+        else {
+            $('#loader').hide();
+            alert("flash failed");
+            $(hideBackground).remove();
+        }
+    });
+
+
+    /* Boot update */
+    var bootBtn = document.createElement("button");
+    bootBtn.textContent = "Run On Next Boot";
+    bootBtn.style.left = "31.5%";
+    bootBtn.classList.add("rauc_button");
+    bootBtn.onclick = function () {
+        $.ajax({
+            url: "/raucupdate",
+            type: "GET",
+            dataType: "json",
+            data: { "func": "status mark-active other", "target": "", "params": "" },
+            success: function (res) {
+                if (res.data.includes("rootfs.1")) {
+                    alert("Partiton is switced to Image A \nClick on 'Reboot Device'");
+                }
+                else if (res.data.includes("rootfs.0")) {
+                    alert("Partiton is switced to Image B \nClick on 'Reboot Device'");
+                }
+                else {
+                    alert(res.data);
+                }
+            },
+            error: function () {
+                alert("Network Error");
+            }
+        });
+    };
 
     $.ajax({
         url: "/raucupdate",
@@ -1654,25 +1760,14 @@ function generateRAUCblock() {
                 result = result.replace(/\x1b\[0m/g, '</span>');                        // Reset color
 
                 var lines = result.split('\n');
-                var bootedFrom = lines.find(line => line.includes('Booted from:'));
-                if (bootedFrom) {
-                    var bootedStatus = bootedFrom.split(': ')[1].trim();
-                    var bootedText = bootedStatus.includes('rootfs.0') ? '<b>Image A</b>' : '<b>Image B</b>';
-                    document.getElementById("requested-boot").innerHTML = bootedText;
-
-                    if (bootedText.endsWith("Image A</b>")) {
-                        imgAConfig.radioInput.checked = true;
-                    } else if (bootedText.endsWith("Image B</b>")) {
-                        imgBConfig.radioInput.checked = true;
-                    }
-                }
+                var bootedFrom = lines.find(line => line.includes('Activated:'));
 
                 var rootfsB = lines.find(line => line.includes('[rootfs.1]'));
                 if (rootfsB) {
                     var rootfsBIndex = lines.indexOf(rootfsB);
                     var statusBLine = lines.slice(rootfsBIndex, rootfsBIndex + 4).find(line => line.includes('boot status:'));
                     var statusB = statusBLine ? statusBLine.split('boot status: ')[1].trim() : '-';
-                    document.getElementById("imageB-boot").innerHTML = `${statusB}`;
+                    document.getElementById("imageB").innerHTML = `${statusB}`;
                 }
 
                 var rootfsA = lines.find(line => line.includes('[rootfs.0]'));
@@ -1680,7 +1775,45 @@ function generateRAUCblock() {
                     var rootfsAIndex = lines.indexOf(rootfsA);
                     var statusALine = lines.slice(rootfsAIndex, rootfsAIndex + 4).find(line => line.includes('boot status:'));
                     var statusA = statusALine ? statusALine.split('boot status: ')[1].trim() : '-';
-                    document.getElementById("imageA-boot").innerHTML = `${statusA}`;
+                    document.getElementById("imageA").innerHTML = `${statusA}`;
+                }
+                if (bootedFrom) {
+                    var bootedStatus = bootedFrom.split(': ')[1].trim();
+                    if (bootedStatus.includes('rootfs.0')) {
+                        var RunbootTextA = document.getElementById("statusimageA");
+                        RunbootTextA.innerHTML = " yes";
+                        RunbootTextA.style.color = "#16f316";
+                        var RunbootTextB = document.getElementById("statusimageB");
+                        RunbootTextB.innerHTML = " no";
+                        RunbootTextB.style.color = "red";
+                        containerA.appendChild(bootStatus);
+                        containerB.appendChild(hiddenFileNameInput);
+                        containerB.appendChild(raucFlashBtn);
+                        containerB.appendChild(fileInput);
+                        containerB.appendChild(fileNameDisplay);
+                        if (!statusB.includes("bad")) {
+                            containerB.appendChild(bootBtn);
+                        }
+                    } else if (bootedStatus.includes('rootfs.1')) {
+                        var RunbootTextA = document.getElementById("statusimageA");
+                        RunbootTextA.innerHTML = " no";
+                        RunbootTextA.style.color = "red";
+                        var RunbootTextB = document.getElementById("statusimageB");
+                        RunbootTextB.innerHTML = " yes";
+                        RunbootTextB.style.color = "#16f316";
+                        containerB.appendChild(bootStatus);
+                        containerA.appendChild(hiddenFileNameInput);
+                        containerA.appendChild(raucFlashBtn);
+                        containerA.appendChild(fileInput);
+                        containerA.appendChild(fileNameDisplay);
+                        if (!statusA.includes("bad")) {
+                            containerA.appendChild(bootBtn);
+                        }
+                    }
+                    else {
+                        document.getElementById("statusimageA").innerHTML("-");
+                        document.getElementById("statusimageB").innerHTML("-");
+                    }
                 }
             } else if (res.error) {
                 document.getElementById("status-output").textContent = "Error: " + res.error;
@@ -1691,238 +1824,36 @@ function generateRAUCblock() {
         }
     });
 
-    BootStatus.appendChild(statusTable);
-    container.appendChild(BootStatus);
+    mainContainer.appendChild(containerA);
+    mainContainer.appendChild(containerB);
 
-    // Switch Partition Section
-    var SwitchPartition = createSection("Switch Partition:");
-    SwitchPartition.className = 'rauc_content';
-    container.appendChild(SwitchPartition);
-
-    function createRadioButton(id, name, value, labelText) {
-        var radioInput = document.createElement('input');
-        radioInput.type = 'radio';
-        radioInput.id = id;
-        radioInput.name = name;
-        radioInput.value = value;
-
-        var label = document.createElement('label');
-        label.htmlFor = id;
-        label.appendChild(document.createTextNode(labelText));
-
-        return { radioInput, label };
-    }
-
-    var configbtn = document.createElement("button");
-    configbtn.textContent = "Configure";
-    configbtn.className = 'configBtn';
-
-   function configurePartition() {
-        var selectedRadio = document.querySelector('input[name="switch-partition"]:checked');
-        if (selectedRadio) {
-            var ajaxData = selectedRadio.value === 'image A' ? 'status mark-active booted' : 'status mark-active other';
-
-            $.ajax({
-                url: "/raucupdate",
-                type: "GET",
-                dataType: "json",
-                data: { "func": ajaxData, "target":"", "params":"" },
-                success: function(res) {
-                    if (res.data) {
-                        alert(res.data);
-                    }
-                },
-                error: function() {
-                    alert("not booted");
-                }
-            });
-        } else {
-            alert("Please select a Partition.");
-        }
-    }
-    configbtn.addEventListener('click', configurePartition);
-    var tablecomp = document.createElement('table');
-    tablecomp.className = 'radiobuttons';
-
-    var trcomp1 = document.createElement('tr');
-
-    var imgAConfig = createRadioButton('imageA', 'switch-partition', 'image A', ' Image A');
-    var imgBConfig = createRadioButton('imageB', 'switch-partition', 'image B', ' Image B');
-
-    var tdcomp1 = document.createElement('td');
-    tdcomp1.appendChild(imgAConfig.radioInput);
-    tdcomp1.appendChild(imgAConfig.label);
-    trcomp1.appendChild(tdcomp1);
-
-    var tdcomp2 = document.createElement('td');
-    tdcomp2.appendChild(imgBConfig.radioInput);
-    tdcomp2.appendChild(imgBConfig.label);
-    trcomp1.appendChild(tdcomp2);
-
-    tablecomp.appendChild(trcomp1);
-
-    var trcomp2 = document.createElement('tr');
-    var configBtnCell = document.createElement('td');
-    configBtnCell.colSpan = 2;
-    configBtnCell.appendChild(configbtn);
-    trcomp2.appendChild(configBtnCell);
-
-    tablecomp.appendChild(trcomp2);
-
-    SwitchPartition.appendChild(tablecomp);
-
-    // Upload and Flash Partition Section
-    var uploadFlashSection = createSection("Upload and Flash Partition:");
-    uploadFlashSection.className = 'rauc_content';
-
-    var uploadTable = document.createElement('table');
-    var BrowseRow = document.createElement('tr');
-    var uploadRow = document.createElement('tr');
-
-    var fileInputCell = document.createElement('td');
-    fileInputCell.style.display = 'flex';
-    fileInputCell.style.alignItems  = 'center';
-    var labelFileInput = document.createElement('label');
-    labelFileInput.setAttribute('for', 'file-input');
-    labelFileInput.className = 'file-upload';
-    labelFileInput.textContent = 'Browse';
-
-    var smload = document.createElement("div");
-    smload.id="uploadraucid";
-    smload.style.display = 'inline-block';
-    smload.style.marginLeft = '15px';
-    var tip=document.createElement("a");
-    tip.id="uploadraucstatus";
-    tip.classList.add("tooltiptext");
-    smload.append(tip);
-
-    var fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.id = 'file-input';
-    fileInput.className = 'file-input';
-    fileInput.style.display = 'none';
-    fileInput.accept = '.raucb';
-    $('#rauc_file_name').change(function(e){
-        document.getElementById("uploadraucid").className = "";
-        document.getElementById("uploadraucstatus").innerHTML = "";
-    });
-    fileInput.addEventListener('change', function(event) {
-    var file = event.target.files[0];
-    if (file) {
-
-        document.getElementById("uploadraucstatus").innerHTML = "";
-        document.getElementById("uploadraucid").className = "";
-        document.getElementById("uploadraucid").classList.add("ministatusloading");
-        document.getElementById("flashBtn").disabled = true;
-        var formData = new FormData();
-        formData.append("file", file);
-        fileUploder(formData, file, "rauc_file_name", "rauc")
-            .then(function(response) {
-               if (response === "Success") {
-                    document.getElementById("uploadraucid").className = "";
-                    document.getElementById("uploadraucid").classList.add("tooltip", "ministatussuccess");
-                    document.getElementById("uploadraucstatus").innerHTML = "Success";
-                } else {
-                    document.getElementById("uploadraucid").className = "";
-                    document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
-                    document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
-                }
-                document.getElementById("flashBtn").disabled = false;
-            })
-            .catch(function(error) {
-                document.getElementById("uploadraucid").className = "";
-                document.getElementById("uploadraucid").classList.add("tooltip", "ministatusfail");
-                document.getElementById("uploadraucstatus").innerHTML = "Upload Failed";
-                document.getElementById("flashBtn").disabled = false;
-            });
-    }
-    });
-
-    var fileNameDisplay = document.createElement('span');
-    fileNameDisplay.classList.add('file-name');
-    fileNameDisplay.id = 'rauc_file_name';
-    fileNameDisplay.textContent = 'No file chosen';
-
-    var hiddenFileNameInput = document.createElement('input');
-    hiddenFileNameInput.type = 'hidden';
-    hiddenFileNameInput.id = 'rauc_hidden_file_name';
-
-    fileInputCell.appendChild(hiddenFileNameInput);
-
-    fileInput.addEventListener('change', function() {
-        var fileName = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
-        fileNameDisplay.textContent = fileName;
-        hiddenFileNameInput.value = fileName;
-    });
-
-    fileInputCell.appendChild(labelFileInput);
-    fileInputCell.appendChild(fileInput);
-    fileInputCell.appendChild(fileNameDisplay);
-    fileInputCell.append(smload);
-    BrowseRow.appendChild(fileInputCell);
-
-    var smload1 = document.createElement("div");
-    smload1.id="installraucid";
-    smload1.style.display = 'inline-block';
-    smload1.style.marginLeft = '15px';
-    smload1.style.marginTop = '5px';
-    smload1.style.float = 'left';
-    var tip1=document.createElement("a");
-    tip1.id="installraucstatus";
-    tip1.classList.add("tooltiptext");
-    smload1.append(tip1);
-
-    var uploadBtnCell = document.createElement('td');
-    var uploadBtn = document.createElement("button");
-    uploadBtn.className = "file-upload";
-    uploadBtn.id = "flashBtn";
-    uploadBtn.style.marginTop = '0px';
-    uploadBtn.textContent = 'Flash';
-    uploadBtn.onclick = function () {
-    $('#loader').show();
-        document.getElementById("installraucstatus").innerHTML = "";
-        document.getElementById("installraucid").className = "";
-        document.getElementById("installraucid").classList.add("ministatusloading");
-        var uplodedFile = $('#rauc_hidden_file_name').val().split("\t")[0];
+    /* Reboot the board */
+    var rebootBtn = document.createElement("button");
+    rebootBtn.classList.add("rauc_button");
+    rebootBtn.textContent = "Reboot Device";
+    rebootBtn.style.width = "10%";
+    rebootBtn.style.left = "45%";
+    rebootBtn.onclick = function () {
         $.ajax({
             url: "/raucupdate",
             type: "GET",
             dataType: "json",
-            data: { "func": "install /data/"+uplodedFile, "target":"", "params":"" },
-            success: function(res) {
-                if (res.status=='success') {
-                    $('#loader').hide();
-                    alert("flash successful!");
-                    document.getElementById("installraucid").className = "";
-                    document.getElementById("installraucid").classList.add("tooltip", "ministatussuccess");
-                    document.getElementById("installraucstatus").innerHTML = "Flash Success";
-                }else{
-                    $('#loader').hide();
-                    alert(res.data);
-                    document.getElementById("installraucid").className = "";
-                    document.getElementById("installraucid").classList.add("tooltip", "ministatusfail");
-                    document.getElementById("installraucstatus").innerHTML = "Flash Failed";
+            data: { "func": "reboot", "target": "", "params": "" },
+            success: function (res) {
+                if (!res.data.includes("Invalid command")) {
+                    alert("Message: Reboot successful please refresh the browser after 10s");
+                }
+                else {
+                    alert("reboot failed");
                 }
             },
-            error: function() {
-                $('#loader').hide();
-                alert("install failed!");
-                document.getElementById("installraucid").className = "";
-                document.getElementById("installraucid").classList.add("tooltip", "ministatusfail");
-                document.getElementById("installraucstatus").innerHTML = "Flash Failed";
+            error: function () {
+                alert("reboot failed");
             }
         });
     };
-    uploadBtnCell.appendChild(uploadBtn);
-    uploadBtnCell.appendChild(smload1);
-    uploadRow.appendChild(uploadBtnCell);
-
-    uploadTable.appendChild(BrowseRow);
-    uploadTable.appendChild(uploadRow);
-    uploadFlashSection.appendChild(uploadTable);
-    container.appendChild(uploadFlashSection);
-
-    $("#rauc_update_screen").append(container);
+    $("#rauc_update_screen").append(mainContainer);
+    $("#rauc_update_screen").append(rebootBtn);
 }
 function generateBootModeblock(){
     var block = $("#detectBootModeID");
