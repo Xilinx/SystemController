@@ -1811,8 +1811,8 @@ function generateRAUCblock() {
                         }
                     }
                     else {
-                        document.getElementById("statusimageA").innerHTML("-");
-                        document.getElementById("statusimageB").innerHTML("-");
+                        document.getElementById("statusimageA").innerHTML = " -";
+                        document.getElementById("statusimageB").innerHTML = " -";
                     }
                 }
             } else if (res.error) {
