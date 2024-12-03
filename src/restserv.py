@@ -184,12 +184,23 @@ class ClockFilesList(Resource):
                 }
                 return resp_json, 200
             elif req == "pdi":
-                pdifiles = os.listdir(app_config["PDIFilePath"]+app_config["deviname"]) if os.path.exists(app_config["PDIFilePath"]+app_config["deviname"]) else []
+                default_pdi_files = []
+                upload_pdi_files = []
+                if (os.path.exists(app_config["PDIFilePath"]+app_config["deviname"])):
+                    for default_pdifiles in os.listdir(app_config["PDIFilePath"]+app_config["deviname"]):
+                        if default_pdifiles.endswith(".pdi"):
+                            default_pdi_files.append(default_pdifiles)
+                if (os.path.exists(app_config["uploaded_pdi_files_path"])):
+                    for upload_pdis in os.listdir(app_config["uploaded_pdi_files_path"]):
+                        upload_pdi_files.append(upload_pdis)
                 resp_json = {
                     "status": "success"
                     , "data": {
-                        "pdi": {
-                            "pdi_files": pdifiles
+                        "default_pdis": {
+                            "pdi_files": default_pdi_files
+                        }
+                        , "user_pdis":{
+                            "pdi_files":upload_pdi_files
                         }
                     }
                 }

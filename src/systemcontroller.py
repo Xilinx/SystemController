@@ -27,9 +27,6 @@ import restserv
 #
 app = Flask(__name__)
 api = Api(app)
-app.config['PDI_UPLOAD_FOLDER'] = app_config["PDIFilePath"]
-app.config['UPLOAD_FOLDER'] = app_config["uploaded_files_path"]
-app.config['RAUC_UPLOAD_FOLDER'] = app_config["raucFilepath"]
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024 * 1024 # 1 GB
 ALLOWED_CLK_EXTENSIONS = set(app_config["allowed_clock_files"])
 # ALLOWED_PDI_EXTENSIONS = set(app_config["allowed_pdi_files"])
@@ -45,6 +42,8 @@ def allowed_rauc_file(filename):
 def index():
     if not os.path.exists(app_config["uploaded_files_path"]):
         os.makedirs(app_config["uploaded_files_path"])
+    if not os.path.exists(app_config["uploaded_pdi_files_path"]):
+        os.makedirs(app_config["uploaded_pdi_files_path"])
     # returning template.
     generate_gen_sc_file(sc_app_path, app_config)
     return render_template("index.html", versioning = ""+ app_config["major_version"]+"."+app_config["minor_version"] + "." + app_config["dev_for_major_ver"]+"."+app_config["dev_minor_ver"])	
@@ -253,13 +252,13 @@ if __name__ == '__main__':
 
             if req == 'clock' and file and allowed_clk_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app_config["uploaded_files_path"], filename))
             elif req == 'pdi' and file and allowed_pdi_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['PDI_UPLOAD_FOLDER']+app_config["deviname"], filename))
+                file.save(os.path.join(app_config["uploaded_pdi_files_path"], filename))
             elif req == 'rauc' and file and allowed_rauc_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['RAUC_UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app_config["raucFilepath"], filename))
             else:
                 errors = True
 

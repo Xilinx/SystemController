@@ -27,7 +27,8 @@ app_config = {
     ,"jnlocalrundirroot":"/home/root/.local/share/jupyter/runtime/"
     ,"8A34001_clk_files_path":"/usr/share/system-controller-app/BIT/clock_files/"
     ,"board_file_path":"/home/root/.sc_app/board"
-    ,"uploaded_files_path":"/usr/share/system-controller-app/.sc_app/clock_files/"	
+    ,"uploaded_files_path":"/data/clock_files/"
+    ,"uploaded_pdi_files_path":"/data/PDIs/"
     ,"allowed_clock_files":['txt', 'tcs', 'bin']
 }
 

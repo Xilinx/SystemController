@@ -429,11 +429,17 @@ function upload_clock_files(funcType) {
             }else if (funcType === "pdi"){
                 document.querySelectorAll('#PDIselectionOption1 , #PDIselectionOption2').forEach((em, i) => {
                     while (em.length > 0) em.remove(em.length - 1);
-                    jQuery.each(res["data"]["pdi"]["pdi_files"], function (k, d) {
+                    jQuery.each(res["data"]["default_pdis"]["pdi_files"], function (k, d) {
                         var g = document.createElement("option");
                         g.setAttribute('value', d);
                         g.innerHTML = d
-                        em.appendChild(g);
+                        em.children[0].appendChild(g);
+                    });
+                    jQuery.each(res["data"]["user_pdis"]["pdi_files"], function (k, d) {
+                        var g = document.createElement("option");
+                        g.setAttribute('value', d);
+                        g.innerHTML = d
+                        em.children[1].appendChild(g);
                     });
                 });
             }else if (funcType === "rauc"){
@@ -444,6 +450,7 @@ function upload_clock_files(funcType) {
                         g.setAttribute('value', d);
                         g.innerHTML = d
                     });
+                    
                 });
             }
         },
@@ -2047,6 +2054,12 @@ function generatePDIblock(){
     var m = document.createElement("select");
     m.id = "PDIselectionOption1";
     m.classList.add("dash_bm");
+    var defOption = document.createElement("optgroup");
+    defOption.setAttribute("label", "Default");
+    m.appendChild(defOption);
+    var usrOption = document.createElement("optgroup");
+    usrOption.setAttribute("label", "User");
+    m.appendChild(usrOption);
     em2.appendChild(m);
     var button2 = document.createElement("input");
     button2.classList.add("buttons");
@@ -2076,6 +2089,12 @@ function generatePDIblock(){
     var m = document.createElement("select");
     m.id = "PDIselectionOption2";
     m.classList.add("dash_bm");
+    var defOption = document.createElement("optgroup");
+    defOption.setAttribute("label", "Default");
+    m.appendChild(defOption);
+    var usrOption = document.createElement("optgroup");
+    usrOption.setAttribute("label", "User");
+    m.appendChild(usrOption);
     em4.appendChild(m);
     var button3 = document.createElement("input");
     button3.classList.add("buttons");
