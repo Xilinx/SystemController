@@ -20,7 +20,7 @@ app_config = {
     ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 10 -s 1 -o ./static/tmp/"
     ,"PDIFilePath":"/usr/share/system-controller-app/BIT/" #device name is added in systemcontroller.py file
     ,"raucFilepath":"/data/"
-    ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
+    ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listFMCvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
     ,"config_bm_list_cmds":["listbootmode"]
     ,"jnlocalrundir":"/home/petalinux/.local/share/jupyter/runtime/"

@@ -579,10 +579,11 @@ function addVoltageTab(){
 function addVadjTab(){
 var innCompsget = [];
 var innCompsboot = [];
-jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
-        tdsary = tds.split(" - (");
-        tds = tdsary[0];
-    if (tds.includes("FMC") || tds.includes("VCCO_706")){
+jQuery.each(listsjson_sc["listFMCvoltage"] , function(j, tds){
+        tdsary = tds.split(": ");
+        tdsval = tdsary[1].split(" - ");
+        tds = tdsval[0];
+        voltage_range = tdsval[1].match(/\d+\.\d+/g);
         var getv = {
             "type":"list"
             ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
@@ -618,7 +619,7 @@ jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
             ,"L0": "Set "+tds
             ,"D0": "value"
             ,"D0N": "V"
-            ,"D0V": ["0.0","1.2","1.5"]
+            ,"D0V": voltage_range
             ,"D0sc_cmd":"getvoltage"
             ,"D0F":true
             ,"B0": "Set"
@@ -646,7 +647,7 @@ jQuery.each(listsjson_sc["listvoltage"] , function(j, tds){
             , "B0params":""
         };
         innCompsboot.push(bootv);
-       }
+       return false;
 });
     var headcompsset = {
             "headcomponents":["C,L0,L1,B0"]
