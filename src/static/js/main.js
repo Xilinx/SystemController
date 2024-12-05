@@ -541,6 +541,7 @@ function exportCSV() {
     var popup = document.createElement('div');
     popup.setAttribute('id', 'popup');
     popup.className = 'popup-content';
+    popup.style.zoom = "normal";
 
     var popupHeader = document.createElement('div');
     popupHeader.className = 'popup-header';
