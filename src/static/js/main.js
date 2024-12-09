@@ -1400,6 +1400,7 @@ function generateBITUI() {
    // Create the clear button
     var clearButton = document.createElement("input");
     clearButton.setAttribute("type", "button");
+    clearButton.classList.add("textbox_buttons");
     clearButton.style.marginRight = "5px";
     clearButton.setAttribute("value", "clear");
     clearButton.addEventListener("click", function() {
@@ -1408,6 +1409,7 @@ function generateBITUI() {
     // Create the copy button
     var copyButton = document.createElement("input");
     copyButton.setAttribute("type", "button");
+    copyButton.classList.add("textbox_buttons");
     copyButton.setAttribute("value", "copy");
     copyButton.addEventListener("click", function() {
         textbox.select();
@@ -1799,9 +1801,7 @@ function generateRAUCblock() {
                         containerB.appendChild(raucFlashBtn);
                         containerB.appendChild(fileInput);
                         containerB.appendChild(fileNameDisplay);
-                        if (!statusB.includes("bad")) {
-                            containerB.appendChild(bootBtn);
-                        }
+                        containerB.appendChild(bootBtn);
                     } else if (bootedStatus.includes('rootfs.1')) {
                         var RunbootTextA = document.getElementById("statusimageA");
                         RunbootTextA.innerHTML = " no";
@@ -1814,9 +1814,7 @@ function generateRAUCblock() {
                         containerA.appendChild(raucFlashBtn);
                         containerA.appendChild(fileInput);
                         containerA.appendChild(fileNameDisplay);
-                        if (!statusA.includes("bad")) {
-                            containerA.appendChild(bootBtn);
-                        }
+                        containerA.appendChild(bootBtn);
                     }
                     else {
                         document.getElementById("statusimageA").innerHTML = " -";

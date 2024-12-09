@@ -576,168 +576,169 @@ function addVoltageTab(){
             };
     boardsettingsTab.push(dict);
 }
-function addVadjTab(){
-var innCompsget = [];
-var innCompsboot = [];
-jQuery.each(listsjson_sc["listFMCvoltage"] , function(j, tds){
-        tdsary = tds.split(": ");
-        tdsval = tdsary[1].split(" - ");
-        tds = tdsval[0];
-        voltage_range = tdsval[1].match(/\d+\.\d+/g);
-        var getv = {
-            "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
-            ,"L0": "Get "+tds
-            ,"V0": "- V"
-            ,"V0N": "V"
-            ,"V0V": "voltage"
-            ,"B0": "Get"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"getvoltage"
-            , "B0target": tds
-            , "B0params":""
-        };
-        innCompsget.push(getv);
-        var getv2 = {
-            "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
-            ,"L0": "Get "+tds+" All"
-            ,"V0": "- V"
-            ,"V0N": "V"
-            ,"V0V": "io"
-            ,"B0": "Get"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"getvoltage"
-            , "B0target": tds
-            , "B0params":"all"
-        };
-        innCompsget.push(getv2);
+function addVadjTab() {
+    var innCompsget = [];
+    var innCompsboot = [];
+    var tds = listsjson_sc["listFMCvoltage"][0]
+    var tdsary = tds.split(": ");
+    var tdsval = tdsary[1].split(" - (");
+    tds = tdsval[0];
+    var valtage_string =  tdsval[1].slice(0, -1); // Remove the  ')'
+    var voltage_range = valtage_string.split(", ");
+    voltage_range =  voltage_range.map(val => parseFloat(val)); // Convert to numbers
+    console.log(voltage_range)
+    var getv = {
+        "type": "list"
+        , "components": ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+        , "L0": "Get " + tds
+        , "V0": "- V"
+        , "V0N": "V"
+        , "V0V": "voltage"
+        , "B0": "Get"
+        , "B0A": "/cmdquery"
+        , "B0sc_cmd": "getvoltage"
+        , "B0target": tds
+        , "B0params": ""
+    };
+    innCompsget.push(getv);
+    var getv2 = {
+        "type": "list"
+        , "components": ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+        , "L0": "Get " + tds + " All"
+        , "V0": "- V"
+        , "V0N": "V"
+        , "V0V": "io"
+        , "B0": "Get"
+        , "B0A": "/cmdquery"
+        , "B0sc_cmd": "getvoltage"
+        , "B0target": tds
+        , "B0params": "all"
+    };
+    innCompsget.push(getv2);
 
-     var setv = {
-            "type":"list" 
-            ,"components" : ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
-            ,"L0": "Set "+tds
-            ,"D0": "value"
-            ,"D0N": "V"
-            ,"D0V": voltage_range
-            ,"D0sc_cmd":"getvoltage"
-            ,"D0F":true
-            ,"B0": "Set"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"setvoltage"
-            , "B0target":tds
-            , "B0params":""
-        };
-        if(general.boardName.toLowerCase()!="vek280"){
+    var setv = {
+        "type": "list"
+        , "components": ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
+        , "L0": "Set " + tds
+        , "D0": "value"
+        , "D0N": "V"
+        , "D0V": voltage_range
+        , "D0sc_cmd": "getvoltage"
+        , "D0F": true
+        , "B0": "Set"
+        , "B0A": "/cmdquery"
+        , "B0sc_cmd": "setvoltage"
+        , "B0target": tds
+        , "B0params": ""
+    };
+    if (general.boardName.toLowerCase() != "vek280") {
         innCompsget.push(setv);
-        }
-     var bootv = {
-            "type":"list"
-            ,"components" : ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
-            ,"L0": "Set On-Boot "+tds
-            ,"D0": "value"
-            ,"D0N": "V"
-            ,"D0V": ["0.0","1.2","1.5"]
-            ,"D0sc_cmd":"getvoltage"
-            ,"D0F":true
-            ,"B0": "Set"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"setbootvoltage"
-            , "B0target": tds
-            , "B0params":""
-        };
-        innCompsboot.push(bootv);
-       return false;
-});
+    }
+    var bootv = {
+        "type": "list"
+        , "components": ["C,L0,D0,B0"]    // Checkbox, Label, dropdown, info, button, Action
+        , "L0": "Set On-Boot " + tds
+        , "D0": "value"
+        , "D0N": "V"
+        , "D0V": ["0.0", "1.2", "1.5"]
+        , "D0sc_cmd": "getvoltage"
+        , "D0F": true
+        , "B0": "Set"
+        , "B0A": "/cmdquery"
+        , "B0sc_cmd": "setbootvoltage"
+        , "B0target": tds
+        , "B0params": ""
+    };
+    innCompsboot.push(bootv);
     var headcompsset = {
-            "headcomponents":["C,L0,L1,B0"]
-            ,"L0": "Voltage Name"
-            , "L1" : "Volts"
-            , "B0" : "Set All"
+        "headcomponents": ["C,L0,L1,B0"]
+        , "L0": "Voltage Name"
+        , "L1": "Volts"
+        , "B0": "Set All"
     };
     var headcompsget = {
-            "headcomponents":["C,L0,L1,L2"]
-            ,"L0": "Voltage Name"
-            , "L1" : "Volts"
-            , "L2" : ""
+        "headcomponents": ["C,L0,L1,L2"]
+        , "L0": "Voltage Name"
+        , "L1": "Volts"
+        , "L2": ""
     };
 
     var headcompsgethspc = {
-            "headcomponents":["C,L0,L1,B0"]
-            ,"L0": "Name"
-            , "L1" : "Info"
-            , "B0" : "Get All"
+        "headcomponents": ["C,L0,L1,B0"]
+        , "L0": "Name"
+        , "L1": "Info"
+        , "B0": "Get All"
     };
-var hspctabs = [];
-jQuery.each(listsjson_sc["listFMC"] , function(j, tag){
-     if (tag.length == 0) { return; }
-     var innCompsgethspc = [];
-     jQuery.each([["All","all"],["Common","common"],["Board","board"],["Multirecord","multirecord"]] , function(i, tds){
-        var eachcomp = {
-            "type":"list"
-            ,"components" : ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
-            ,"L0": tds[0]
-            ,"V0": "-"
-            ,"V0N": ""
-            ,"V0V": "io"
-            ,"B0": "Get"
-            ,"B0A": "/cmdquery"
-            ,"B0sc_cmd":"getFMC"
-            , "B0target": tag
-            , "B0params":tds[1]
+    var hspctabs = [];
+    jQuery.each(listsjson_sc["listFMC"], function (j, tag) {
+        if (tag.length == 0) { return; }
+        var innCompsgethspc = [];
+        jQuery.each([["All", "all"], ["Common", "common"], ["Board", "board"], ["Multirecord", "multirecord"]], function (i, tds) {
+            var eachcomp = {
+                "type": "list"
+                , "components": ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
+                , "L0": tds[0]
+                , "V0": "-"
+                , "V0N": ""
+                , "V0V": "io"
+                , "B0": "Get"
+                , "B0A": "/cmdquery"
+                , "B0sc_cmd": "getFMC"
+                , "B0target": tag
+                , "B0params": tds[1]
+            };
+            innCompsgethspc.push(eachcomp);
+        });
+        var altb = {
+            "subtype": "list"
+            , "name": tag
+            , "components": innCompsgethspc
+            , "headcomponents": headcompsgethspc
+
         };
-        innCompsgethspc.push(eachcomp);
+        hspctabs.push(altb);
     });
-    var altb = {
-     "subtype":"list"
-    ,"name": tag
-    ,"components": innCompsgethspc
-    , "headcomponents" : headcompsgethspc
+    var hspc =
+    {
+        "subtype": "tab"
+        , "name": "HSPC"
+        , "components": hspctabs
+    };
+    var bootup =
+    {
+        "subtype": "list"
+        , "name": "Boot-up"
+        , "components": innCompsboot
+        , "headcomponents": headcompsset
+    };
+    var dict = {
+        "tab": "FMC"
+        , "subtype": "tab"
+        , "components": [
+            {
+                "subtype": "tab"
+                , "name": "Set VADJ"
+                , "components": [
+                    {
+                        "subtype": "list"
+                        , "name": "Current"
+                        , "components": innCompsget
+                        , "headcomponents": headcompsget
 
-     };
-     hspctabs.push(altb);
-});
-var hspc = 
-            {
-             "subtype":"tab"
-            ,"name": "HSPC"
-            , "components":hspctabs
-            };
-var bootup =
-            {
-            "subtype":"list"
-            ,"name": "Boot-up"
-            ,"components": innCompsboot
-            , "headcomponents" : headcompsset
-            };
-    var dict = {"tab": "FMC"
-    ,"subtype":"tab"
-        ,"components":[
-            {
-            "subtype":"tab"
-            ,"name": "Set VADJ"
-            ,"components": [
-            {
-            "subtype":"list"
-            ,"name": "Current"
-            ,"components": innCompsget
-            , "headcomponents" : headcompsget
-
-            }
-            ]
+                    }
+                ]
 
             },
-            ]
-            };
-    if(general.boardName.toLowerCase()!="vek280"){
+        ]
+    };
+    if (general.boardName.toLowerCase() != "vek280") {
         dict.components[0].components.push(bootup);
     }
-    if(hspctabs.length){
+    if (hspctabs.length) {
         dict.components.push(hspc);
     }
     boardsettingsTab.push(dict);
 }
-
 function addPowerDomainTab(){
         var innCompsget = [];
         jQuery.each(listsjson_sc["listpowerdomain"] , function(i, tds){

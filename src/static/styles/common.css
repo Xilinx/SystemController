@@ -750,6 +750,11 @@ resize: none;
     right: 3%;
     margin-top: 5px;
 }
+.textbox_buttons{
+  padding-left: 1vh;
+  padding-right: 1vh;
+  cursor: pointer;
+}
 /* Rounded sliders */
 .slider.round {
 border-radius: 34px;
@@ -1480,15 +1485,18 @@ margin-top: 1vh;
   margin-right:1vh;
 }
 .popup-footer span input{
-    margin-left: 1vh;
-padding-left: 1vh;
-padding-right: 1vh;
-font-size: 2vh;
+  margin-left: 1vh;
+  padding-left: 1vh;
+  padding-right: 1vh;
+  font-size: 2vh;
+  cursor: pointer;
 }
 .popupbuttons {
   float: right;
   margin-right:0.2vh;
   margin-bottom:0.82vh;
+  padding-left: 1vh;
+  padding-right: 1vh;
   /*font-size:1vw;*/
 }
 .popupbuttonsInner {
