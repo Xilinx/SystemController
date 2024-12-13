@@ -96,6 +96,8 @@ def generate_gen_sc_file(sc_app_path, app_config):
     f.write("var listsjson_sc = {\n")
     listfeature = p.parse_cmd_resp(Term.exec_cmd(sc_app_path + " -c listfeature\n"), "listfeature")
     finStr = ""
+    if "FMC" in listfeature:
+        listfeature.append("FMCvoltage")
     for k in listfeature:
         if len(finStr):
             finStr = finStr + ","

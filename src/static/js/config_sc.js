@@ -579,14 +579,24 @@ function addVoltageTab(){
 function addVadjTab() {
     var innCompsget = [];
     var innCompsboot = [];
-    var tds = listsjson_sc["listFMCvoltage"][0]
-    var tdsary = tds.split(": ");
-    var tdsval = tdsary[1].split(" - (");
-    tds = tdsval[0];
-    var valtage_string =  tdsval[1].slice(0, -1); // Remove the  ')'
-    var voltage_range = valtage_string.split(", ");
-    voltage_range =  voltage_range.map(val => parseFloat(val)); // Convert to numbers
-    console.log(voltage_range)
+    var tds = "FMC";
+    var voltage_range = [];
+    try {
+        if (listsjson_sc["listFMCvoltage"].length > 0) {
+            var tds_string = listsjson_sc["listFMCvoltage"][0];
+            var tdsary = tds_string.split(": ");
+            if (tdsary.length > 1) {
+                var tdsval = tdsary[1].split(" - (");
+                if (tdsval.length > 1) {
+                    tds = tdsval[0];
+                    var valtage_string = tdsval[1].slice(0, -1); // Remove the ')'
+                    voltage_range = valtage_string.split(", ").map(val => parseFloat(val)); // Convert to numbers
+                }
+            }
+        }
+    } catch (error) {
+        console.log("An error occurred:", error.message);
+    }
     var getv = {
         "type": "list"
         , "components": ["C,L0,V0,B0"]    // Checkbox, Label, editfield, info, button, Action
@@ -640,7 +650,7 @@ function addVadjTab() {
         , "L0": "Set On-Boot " + tds
         , "D0": "value"
         , "D0N": "V"
-        , "D0V": ["0.0", "1.2", "1.5"]
+        , "D0V": voltage_range
         , "D0sc_cmd": "getvoltage"
         , "D0F": true
         , "B0": "Set"
@@ -717,7 +727,7 @@ function addVadjTab() {
         , "components": [
             {
                 "subtype": "tab"
-                , "name": "Set VADJ"
+                , "name": "Set " +tds
                 , "components": [
                     {
                         "subtype": "list"
