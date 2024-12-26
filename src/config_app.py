@@ -18,7 +18,6 @@ app_config = {
     ,"versioninfo":"/usr/bin/version_info.sh" 
     ,"bitlogFilePath":"/usr/share/system-controller-app/.sc_app/BIT.log"
     ,"csvFIlePath":"/usr/share/raft/examples/python/pmtool/pm-cmd.py -c output-csv -d 10 -s 1 -o ./static/tmp/"
-    ,"PDIFilePath":"/usr/share/system-controller-app/BIT/" #device name is added in systemcontroller.py file
     ,"raucFilepath":"/data/"
     ,"config_sc_list_cmds":["listpower","listclock","listvoltage","listFMCvoltage","listgpio","listSFP","listpowerdomain","listQSFP","listFMC"]
     ,"config_bit_list_cmds":["listBIT"]
@@ -28,7 +27,7 @@ app_config = {
     ,"8A34001_clk_files_path":"/usr/share/system-controller-app/BIT/clock_files/"
     ,"board_file_path":"/home/root/.sc_app/board"
     ,"uploaded_files_path":"/data/clock_files/"
-    ,"uploaded_pdi_files_path":"/data/PDIs/"
+    ,"PDIFilePath":"/data/PDIs/"
     ,"allowed_clock_files":['txt', 'tcs', 'bin']
 }
 

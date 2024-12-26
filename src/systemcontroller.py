@@ -42,8 +42,8 @@ def allowed_rauc_file(filename):
 def index():
     if not os.path.exists(app_config["uploaded_files_path"]):
         os.makedirs(app_config["uploaded_files_path"])
-    if not os.path.exists(app_config["uploaded_pdi_files_path"]):
-        os.makedirs(app_config["uploaded_pdi_files_path"])
+    if not os.path.exists(app_config["PDIFilePath"]):
+        os.makedirs(app_config["PDIFilePath"])
     # returning template.
     generate_gen_sc_file(sc_app_path, app_config)
     return render_template("index.html", versioning = ""+ app_config["major_version"]+"."+app_config["minor_version"] + "." + app_config["dev_for_major_ver"]+"."+app_config["dev_minor_ver"])	
@@ -257,7 +257,7 @@ if __name__ == '__main__':
                 file.save(os.path.join(app_config["uploaded_files_path"], filename))
             elif req == 'pdi' and file and allowed_pdi_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app_config["uploaded_pdi_files_path"], filename))
+                file.save(os.path.join(app_config["PDIFilePath"], filename))
             elif req == 'rauc' and file and allowed_rauc_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app_config["raucFilepath"], filename))
