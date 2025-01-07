@@ -1644,6 +1644,50 @@ function generateRAUCblock() {
     containerB.appendChild(RunBootStatusB);
 
     /* rauc bundle update */
+    
+    var raucpopupmain = document.createElement('div');
+    raucpopupmain.className = 'popup-background';
+    raucpopupmain.style.display = "block";
+
+    var popup = document.createElement('div');
+    popup.setAttribute('id', 'popup');
+    popup.className = 'popup-content';
+    popup.style.zoom = "normal";
+
+    var popupHeader = document.createElement('div');
+    popupHeader.className = 'popup-header';
+
+    var heading = document.createElement('h2');
+    heading.style.textAlign = 'center';
+    heading.setAttribute('popupid', '1');
+    heading.id = 'popupheadingid';
+    heading.textContent = 'Linux File System Status';
+    popupHeader.appendChild(heading);
+
+    var popupMessage = document.createElement('p');
+    popupMessage.style.padding = "10px";
+    popupMessage.style.lineHeight = "25px";
+    popupMessage.style.maxHeight = "50vh";
+    popupMessage.style.overflow = "auto";
+
+    var popupFooter = document.createElement('div');
+    popupFooter.classList.add('popup-footer');
+    var span = document.createElement('span');
+
+    var closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.classList.add('popupbuttons');
+    closeButton.onclick = function () {
+        document.body.removeChild(raucpopupmain);
+    };
+
+    span.appendChild(closeButton);
+    popupFooter.appendChild(span);
+    raucpopupmain.appendChild(popup);
+    popup.appendChild(popupHeader);
+    popup.appendChild(popupMessage);
+    popup.appendChild(popupFooter);
+
     var raucFlashBtn = document.createElement("label");
     raucFlashBtn.textContent = "Update Bundle";
     raucFlashBtn.classList.add("rauc_button");
@@ -1689,22 +1733,28 @@ function generateRAUCblock() {
                             data: { "func": "install /data/" + uplodedFile, "target": "", "params": "" },
                             success: function (res) {
                                 if (res.status == 'success') {
+                                    popupMessage.innerHTML = res.data.replace(/\n/g, '<br>');
+                                    popupMessage.innerHTML += "\n\nClick on 'Reboot Device'"; 
+                                    document.body.appendChild(raucpopupmain);
                                     $('#loader').hide();
-                                    alert(res.data);
                                     $(hideBackground).remove();
                                 } else {
+                                    popupMessage.innerHTML = res.data.replace(/\n/g, '<br>'); 
+                                    document.body.appendChild(raucpopupmain);
                                     $('#loader').hide();
-                                    alert(res.data);
                                     $(hideBackground).remove();
                                 }
                             },
                             error: function () {
+                                popupMessage.innerHTML = "Network error";
+                                document.body.appendChild(raucpopupmain);
                                 $('#loader').hide();
                                 $(hideBackground).remove();
                             }
                         });
                     } else {
-                        alert("File Upload Failed");
+                        popupMessage.innerHTML = "File upload failed";
+                        document.body.appendChild(raucpopupmain);
                         $('#loader').hide();
                         $(hideBackground).remove();
                     }
@@ -1715,8 +1765,9 @@ function generateRAUCblock() {
                 });
         }
         else {
+            popupMessage.innerHTML = "File upload failed";
+            document.body.appendChild(raucpopupmain);
             $('#loader').hide();
-            alert("flash failed");
             $(hideBackground).remove();
         }
     });
@@ -1735,10 +1786,10 @@ function generateRAUCblock() {
             data: { "func": "status mark-active other", "target": "", "params": "" },
             success: function (res) {
                 if (res.data.includes("rootfs.1")) {
-                    alert("Partiton is switced to Image A \nClick on 'Reboot Device'");
+                    alert("Partiton is switced to Image B \nClick on 'Reboot Device'");
                 }
                 else if (res.data.includes("rootfs.0")) {
-                    alert("Partiton is switced to Image B \nClick on 'Reboot Device'");
+                    alert("Partiton is switced to Image A \nClick on 'Reboot Device'");
                 }
                 else {
                     alert(res.data);
