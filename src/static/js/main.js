@@ -2456,11 +2456,14 @@ function layoutDesigns(){
             $("#testboard_home").append(em4);
  	}
    }
-if(general.boardName.toLowerCase()==="unknown"){
-    document.getElementById("testtheboard").remove();
-}else{
-    document.getElementById("boardsupport").remove();
-}
+    if(general.boardName.toLowerCase()==="unknown"){
+        document.getElementById("testtheboard").remove();
+    }else{
+        document.getElementById("boardsupport").remove();
+    }
+    if(rauc_support.rauc === "no"){
+        document.getElementById("raucupdate").remove();
+    }
 /*      VERSAL POWER TOOL  */
 if(general.boardName.toLowerCase()=="vck190" || general.boardName.toLowerCase()=="vmk180"){
 	console.log(general.boardName)

@@ -188,6 +188,18 @@ def generate_gen_sc_file(sc_app_path, app_config):
         f.write('        "{}",\n'.format(line))
     f.write("    ]\n};\n")
     f.close()
+    
+    # Check Rauc support
+    f = open("./static/js/gen_sc.js", "a")
+    f.write("var rauc_support = {\n")
+    rauc_support = Term.exec_cmd("rauc")
+    if "rauc: command not found" in rauc_support:
+        rauc_status = "no"
+    else:
+        rauc_status = "yes"
+    f.write('"rauc":''"' + rauc_status + '"')
+    f.write("\n};")
+    f.close()
 
     #   bit tab components
     f = open("./static/js/gen_bit.js", "w")
